@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISS TAKİP SİSTEMİ - ULTIMATE V6.2</title>
+    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.0</title>
     
+    <!-- Fontlar ve ikonlar -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -21,155 +24,302 @@
             --font-header: 'Orbitron', sans-serif;
         }
 
+        /* AÇIK TEMA */
         body.light-mode {
             --bg-panel: rgba(240, 240, 240, 0.9);
             --text-main: #1a1a1a;
             --text-sub: #555555;
             --border-color: rgba(0, 0, 0, 0.1);
+            background-color: #f0f0f0;
         }
 
         body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             background-color: #000;
             font-family: var(--font-main);
             color: var(--text-main);
             overflow: hidden;
         }
 
+        /* HARİTA */
         #map {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1;
         }
 
+        /* ÜST UI KATMANI */
         .ui-layer {
-            position: absolute; top: 0; left: 0;
+            position: absolute;
+            top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 999; pointer-events: none;
-            display: flex; justify-content: space-between;
-            padding: 20px; box-sizing: border-box;
+            z-index: 999;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .left-column, .right-column {
-            display: flex; flex-direction: column; gap: 15px;
-            width: 350px; pointer-events: auto;
-            max-height: 95vh; overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 350px;
+            pointer-events: auto;
+            max-height: 95vh;
+            overflow-y: auto;
         }
 
+        /* PANELLER */
         .panel {
             background: var(--bg-panel);
             border: 1px solid var(--theme-color);
             border-radius: 8px;
             padding: 15px;
             backdrop-filter: blur(8px);
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
         }
         .panel.minimized .panel-content { display: none; }
 
         .panel-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px; border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 5px;
         }
+
         h2, h3 {
             font-family: var(--font-header);
-            margin: 0; color: var(--theme-color);
+            margin: 0;
+            color: var(--theme-color);
             text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+
+        .version-badge {
+            font-size: 0.6rem;
+            background: var(--theme-color);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
         }
 
         .toggle-btn {
-            background: transparent; border: none;
+            background: transparent;
+            border: none;
             color: var(--text-sub);
             cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .stat-row {
-            display: flex; justify-content: space-between;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             gap: 8px;
             margin-bottom: 6px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .stat-label {
-            display: flex; align-items: center; gap: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .stat-label i {
             min-width: 16px;
             text-align: center;
         }
-        .stat-value { 
-            font-weight: bold; 
-            font-family: var(--font-header); 
-            font-size: 0.95rem;
+        .stat-value {
+            font-weight: bold;
+            font-family: var(--font-header);
+            font-size: 0.9rem;
         }
 
-        .crew-list { list-style: none; padding: 0; margin: 0; }
+        /* MÜRETTEBAT LİSTESİ */
+        .crew-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
         .crew-list li {
-            padding: 8px; border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: center; cursor: pointer;
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
             transition: 0.2s;
+            font-size: 0.9rem;
         }
-        .crew-list li i { margin-right: 8px; }
-        .crew-list li:hover { background: rgba(128,128,128,0.1); color: var(--theme-color); }
+        .crew-list li i {
+            margin-right: 8px;
+            color: var(--theme-color);
+        }
+        .crew-list li:hover {
+            background: rgba(128,128,128,0.1);
+            color: var(--theme-color);
+        }
 
+        /* GRID SEÇENEKLERİ */
         .grid-options {
-            display: grid; grid-template-columns: repeat(4, 1fr);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
         }
 
         .color-circle {
-            width: 25px; height: 25px;
-            border-radius: 50%; cursor: pointer;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
             margin: auto;
+            transition: 0.2s;
+        }
+        .color-circle:hover {
+            transform: scale(1.15);
+            border-color: var(--text-main);
         }
 
         .icon-box {
-            padding: 8px; cursor: pointer;
+            padding: 8px;
             border: 1px solid var(--border-color);
+            border-radius: 4px;
             text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .icon-box:hover {
+            background: var(--theme-color);
+            color: #000;
+            transform: translateY(-1px);
         }
 
+        /* TERMINAL */
         .terminal {
-            position: absolute; bottom: 20px; left: 20px;
-            width: 400px; height: 160px;
-            background: rgba(0,0,0,0.9);
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 120px;
+            background: rgba(0,0,0,0.85);
             border: 1px solid var(--theme-color);
             color: var(--theme-color);
-            padding: 10px; font-family: monospace; font-size: 0.8rem;
-            overflow-y: auto; pointer-events: auto;
-            border-radius: 5px;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-y: auto;
+            pointer-events: auto;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+            opacity: 1;
+            transform: scale(1);
+            transform-origin: bottom left;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 1200;
+        }
+        .terminal.hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
         }
 
+        /* TERMINAL TOGGLE BUTON */
+        #terminal-toggle {
+            position: absolute;
+            bottom: 150px;
+            left: 20px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            background: var(--theme-color);
+            color: #000;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            z-index: 1300;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        #terminal-toggle i {
+            font-size: 0.8rem;
+        }
+        #terminal-toggle:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 14px rgba(0,0,0,0.7);
+        }
+
+        /* KİŞİSEL BİLGİ KARTI */
         .personal-info {
-            position: absolute; bottom: 20px; right: 20px;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
             background: var(--bg-panel);
-            padding: 15px; pointer-events: auto;
             border-right: 4px solid var(--theme-color);
-            border-radius: 5px;
+            padding: 15px;
+            text-align: right;
+            pointer-events: auto;
+            border-radius: 6px;
+            backdrop-filter: blur(5px);
+            font-size: 0.85rem;
+            z-index: 1100;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
         .personal-info h4 {
             margin: 0 0 4px 0;
-            font-family: var(--font-header);
             color: var(--theme-color);
+            font-family: var(--font-header);
+            font-size: 1rem;
         }
         .personal-info p {
             margin: 2px 0;
-            font-size: 0.85rem;
             color: var(--text-sub);
         }
 
+        /* ISS İKON PULSE */
         .pulse-icon {
-            font-size: 32px; color: var(--theme-color);
+            font-size: 32px;
+            color: var(--theme-color);
             text-shadow: 0 0 15px var(--theme-color);
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+            0%   { transform: scale(1);   opacity: 1;   }
+            50%  { transform: scale(1.15); opacity: 0.7; }
+            100% { transform: scale(1);   opacity: 1;   }
         }
 
+        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--theme-color); }
+
+        /* RESPONSIVE KÜÇÜK EKRAN (opsiyonel basic) */
+        @media (max-width: 900px) {
+            .ui-layer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .left-column, .right-column {
+                width: 100%;
+                max-width: 100%;
+                flex-direction: column;
+            }
+            .personal-info {
+                position: static;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -183,26 +333,37 @@
             <!-- ISS SİSTEM PANELİ -->
             <div class="panel" id="panel-system">
                 <div class="panel-header">
-                    <h2>ISS SİSTEMİ</h2>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <h2>ISS SİSTEMİ</h2>
+                        <span class="version-badge">CANLI V7.0</span>
+                    </div>
                     <button class="toggle-btn" onclick="togglePanel('panel-system')">
                         <i class="fa-solid fa-minus"></i>
                     </button>
                 </div>
                 <div class="panel-content">
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-arrow-up-long"></i>İrtifa</span>
+                        <span class="stat-label">
+                            <i class="fa-solid fa-arrow-up-long"></i>İrtifa
+                        </span>
                         <span class="stat-value" id="alt-val">--</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-gauge-high"></i>Hız</span>
+                        <span class="stat-label">
+                            <i class="fa-solid fa-gauge-high"></i>Hız
+                        </span>
                         <span class="stat-value" id="speed-val">--</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-arrows-up-down"></i>Enlem</span>
+                        <span class="stat-label">
+                            <i class="fa-solid fa-arrows-up-down"></i>Enlem
+                        </span>
                         <span class="stat-value" id="lat-val">--</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-arrows-left-right"></i>Boylam</span>
+                        <span class="stat-label">
+                            <i class="fa-solid fa-arrows-left-right"></i>Boylam
+                        </span>
                         <span class="stat-value" id="lng-val">--</span>
                     </div>
                 </div>
@@ -221,7 +382,7 @@
                 </div>
             </div>
 
-            <!-- GÜNEŞ SİSTEMİ MESAFELERİ PANELİ -->
+            <!-- MESAFELER PANELİ -->
             <div class="panel" id="panel-distances">
                 <div class="panel-header">
                     <h3>MESAFELER</h3>
@@ -237,9 +398,27 @@
                         </span>
                         <span class="stat-value" id="you-dist-val">--</span>
                     </div>
-                    <hr style="border-color: var(--border-color); margin:8px 0;">
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-earth-europe"></i>Dünya (Referans)</span>
+                        <span class="stat-label">
+                            <i class="fa-solid fa-earth-europe"></i>
+                            <span>Dünya'ya Uzaklık (ISS)</span>
+                        </span>
+                        <span class="stat-value" id="earth-dist-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-moon"></i>
+                            <span>Ay'a Uzaklık (ISS)</span>
+                        </span>
+                        <span class="stat-value" id="moon-dist-val">--</span>
+                    </div>
+
+                    <hr style="border-color: var(--border-color); margin:8px 0;">
+
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-earth-europe"></i>Dünya (Referans)
+                        </span>
                         <span class="stat-value">0 km</span>
                     </div>
                     <div class="stat-row">
@@ -289,12 +468,17 @@
 
         <div class="right-column">
             <div class="panel">
-                <div class="panel-header"><h3>SİSTEM AYARLARI</h3></div>
+                <div class="panel-header">
+                    <h3>SİSTEM AYARLARI</h3>
+                </div>
 
-                <button onclick="toggleTheme()" id="theme-toggle-btn"
-                        style="padding: 8px; border:none; background: var(--theme-color); cursor:pointer; margin-bottom:10px; border-radius:3px;">
-                    <i class="fa-solid fa-sun"></i> Tema Değiştir
-                </button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="font-size:0.85rem;">ARAYÜZ MODU</span>
+                    <button onclick="toggleTheme()" id="theme-toggle-btn"
+                        style="padding: 6px 10px; border:none; background: var(--theme-color); cursor:pointer; border-radius:4px; font-size:0.8rem; font-weight:bold; display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-sun"></i> GÜNDÜZ
+                    </button>
+                </div>
 
                 <label style="font-size:0.8rem; color:var(--text-sub);">TEMA RENGİ</label>
                 <div class="grid-options" id="color-grid" style="margin-bottom:12px;"></div>
@@ -304,10 +488,18 @@
             </div>
         </div>
 
-        <div class="terminal" id="terminal">
+        <!-- Terminal Toggle Butonu -->
+        <button id="terminal-toggle" onclick="toggleTerminalWindow()">
+            <i class="fa-solid fa-terminal"></i>
+            <span>Terminal</span>
+        </button>
+
+        <!-- Terminal -->
+        <div class="terminal hidden" id="terminal">
             <div>[SİSTEM] Başlatılıyor...</div>
         </div>
 
+        <!-- Kişisel Bilgi Kartı -->
         <div class="personal-info">
             <h4>Murat Tokaç</h4>
             <p>25170201029</p>
@@ -318,14 +510,14 @@
     </div>
 
 <script>
-/* ========= DEĞİŞKENLER ========= */
+/* ========= GLOBAL DEĞİŞKENLER ========= */
 let map, issMarker, polyline;
 let pathHistory = [];
 let currentIcon = "fa-satellite";
 let isLightMode = false;
 
-// Gerçek ISS API
 const ISS_API_URL = "https://api.wheretheiss.at/v1/satellites/25544";
+const MOON_MEAN_DISTANCE_KM = 384400;
 
 // Kullanıcı konumu
 let userLat = null;
@@ -339,24 +531,31 @@ window.onload = () => {
     renderIcons();
     initUserLocation();
     startIssTracking();
+    addLog("Sistem başlatıldı. Gerçek ISS telemetrisi etkin.");
 };
 
 /* ========= HARİTA ========= */
 function initMap() {
-    map = L.map("map", { zoomControl: false, attributionControl: false }).setView([0,0], 3);
+    map = L.map("map", {
+        zoomControl: false,
+        attributionControl: false
+    }).setView([0, 0], 3);
 
     setMapTiles(false);
 
     polyline = L.polyline(
-        [], 
-        { color: getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim(), weight: 2 }
+        [],
+        {
+            color: getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim(),
+            weight: 2
+        }
     ).addTo(map);
 
-    createMarker([0,0]);
+    createMarker([0, 0]);
 }
 
 function setMapTiles(light) {
-    map.eachLayer(l => { if(l instanceof L.TileLayer) map.removeLayer(l); });
+    map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
 
     const url = light
         ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
@@ -372,11 +571,11 @@ function createMarker(latlng) {
     const divIcon = L.divIcon({
         html: iconHtml,
         className: "",
-        iconSize: [40,40],
-        iconAnchor: [20,20]
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
     });
 
-    issMarker = L.marker(latlng, {icon: divIcon}).addTo(map);
+    issMarker = L.marker(latlng, { icon: divIcon }).addTo(map);
 }
 
 /* ========= GERÇEK ISS TAKİBİ ========= */
@@ -397,10 +596,8 @@ async function fetchAndUpdateIss() {
 
         const pos = [lat, lng];
 
-        // Marker güncelle
+        // Marker ve rota güncelle
         issMarker.setLatLng(pos);
-
-        // Rota geçmişi
         pathHistory.push(pos);
         if (pathHistory.length > 300) pathHistory.shift();
         polyline.setLatLngs(pathHistory);
@@ -411,13 +608,21 @@ async function fetchAndUpdateIss() {
         document.getElementById("alt-val").innerText = alt.toFixed(1) + " km";
         document.getElementById("speed-val").innerText = speed.toFixed(0) + " km/h";
 
-        // Kullanıcıya olan uzaklık (varsa)
+        // Dünya'ya uzaklık ≈ irtifa
+        const earthDist = alt;
+        document.getElementById("earth-dist-val").innerText = earthDist.toFixed(1) + " km";
+
+        // Ay'a uzaklık ≈ Dünya-Ay ortalama mesafe - ISS irtifası (yaklaşık)
+        const moonDist = MOON_MEAN_DISTANCE_KM - earthDist;
+        document.getElementById("moon-dist-val").innerText = moonDist.toFixed(0) + " km";
+
+        // Kullanıcıya olan uzaklık (konum izni verilmişse)
         if (userLat !== null && userLng !== null) {
             const d = getDistanceKm(userLat, userLng, lat, lng);
             document.getElementById("you-dist-val").innerText = d.toFixed(0) + " km";
         }
 
-        addLog(`Konum güncellendi: ${lat.toFixed(2)}, ${lng.toFixed(2)}`);
+        addLog(`KONUM: ${lat.toFixed(2)}, ${lng.toFixed(2)} | İrtifa: ${alt.toFixed(1)} km`);
 
     } catch (e) {
         addLog("HATA: ISS konumu alınamadı.");
@@ -443,20 +648,20 @@ function initUserLocation() {
     );
 }
 
-// Haversine formülü (km)
+// Haversine: km cinsinden mesafe
 function getDistanceKm(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Dünya yarıçapı km
+    const R = 6371;
     const toRad = deg => deg * Math.PI / 180;
 
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
 
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 }
 
@@ -464,13 +669,27 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
 function togglePanel(id) {
     const p = document.getElementById(id);
     p.classList.toggle("minimized");
+    const btnIcon = p.querySelector(".toggle-btn i");
+    if (p.classList.contains("minimized")) {
+        btnIcon.className = "fa-solid fa-plus";
+    } else {
+        btnIcon.className = "fa-solid fa-minus";
+    }
 }
 
 function addLog(msg) {
     const term = document.getElementById("terminal");
     const t = new Date().toLocaleTimeString("tr-TR");
-    term.innerHTML += `<div>[${t}] ${msg}</div>`;
+    const div = document.createElement("div");
+    div.innerHTML = `[${t}] ${msg}`;
+    term.appendChild(div);
     term.scrollTop = term.scrollHeight;
+}
+
+/* ========= TERMINAL TOGGLE ========= */
+function toggleTerminalWindow() {
+    const term = document.getElementById("terminal");
+    term.classList.toggle("hidden");
 }
 
 /* ========= MÜRETTEBAT ========= */
@@ -495,22 +714,22 @@ function renderCrew() {
 /* ========= TEMA & GÖRSEL AYARLAR ========= */
 function toggleTheme() {
     isLightMode = !isLightMode;
-
     const btn = document.getElementById("theme-toggle-btn");
 
-    if(isLightMode){
+    if (isLightMode) {
         document.body.classList.add("light-mode");
         setMapTiles(true);
-        btn.innerHTML = '<i class="fa-solid fa-moon"></i> Tema Değiştir';
+        btn.innerHTML = '<i class="fa-solid fa-moon"></i> GECE';
         btn.style.background = "#333";
         btn.style.color = "#fff";
     } else {
         document.body.classList.remove("light-mode");
         setMapTiles(false);
-        btn.innerHTML = '<i class="fa-solid fa-sun"></i> Tema Değiştir';
+        btn.innerHTML = '<i class="fa-solid fa-sun"></i> GÜNDÜZ';
         btn.style.background = "var(--theme-color)";
         btn.style.color = "#000";
     }
+    addLog(`Tema değiştirildi: ${isLightMode ? "Aydınlık" : "Karanlık"}`);
 }
 
 function renderColors() {
@@ -520,14 +739,14 @@ function renderColors() {
         "#ff00ff","#00ffff","#ffff00","#ff0000"
     ];
     const grid = document.getElementById("color-grid");
-
     colors.forEach(c => {
         const div = document.createElement("div");
         div.className = "color-circle";
         div.style.background = c;
         div.onclick = () => {
             document.documentElement.style.setProperty("--theme-color", c);
-            polyline.setStyle({color: c});
+            polyline.setStyle({ color: c });
+            addLog(`Tema rengi güncellendi: ${c}`);
         };
         grid.appendChild(div);
     });
@@ -539,7 +758,6 @@ function renderIcons() {
         "fa-meteor","fa-earth-americas","fa-globe","fa-shuttle-space"
     ];
     const grid = document.getElementById("icon-grid");
-
     icons.forEach(i => {
         const div = document.createElement("div");
         div.className = "icon-box";
