@@ -2,37 +2,556 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>ISS Canlı Konum 🛰️</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISS TAKİP SİSTEMİ - ULTIMATE V6.2</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        body { margin: 0; background-color: #000; color: #0f0; font-family: monospace; }
-        #map { height: 100vh; }
-        .bilgi { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 10px; border: 1px solid #0f0; z-index: 999; }
+        :root {
+            --theme-color: #00ff9d;
+            --bg-panel: rgba(10, 15, 20, 0.85);
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --font-main: 'Rajdhani', sans-serif;
+            --font-header: 'Orbitron', sans-serif;
+        }
+
+        body.light-mode {
+            --bg-panel: rgba(240, 240, 240, 0.9);
+            --text-main: #1a1a1a;
+            --text-sub: #555555;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000;
+            font-family: var(--font-main);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        #map {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        .ui-layer {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 999; pointer-events: none;
+            display: flex; justify-content: space-between;
+            padding: 20px; box-sizing: border-box;
+        }
+
+        .left-column, .right-column {
+            display: flex; flex-direction: column; gap: 15px;
+            width: 350px; pointer-events: auto;
+            max-height: 95vh; overflow-y: auto;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 15px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .panel.minimized .panel-content { display: none; }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        h2, h3 {
+            font-family: var(--font-header);
+            margin: 0; color: var(--theme-color);
+            text-transform: uppercase;
+        }
+
+        .toggle-btn {
+            background: transparent; border: none;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+
+        .stat-row {
+            display: flex; justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+        .stat-label {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .stat-label i {
+            min-width: 16px;
+            text-align: center;
+        }
+        .stat-value { 
+            font-weight: bold; 
+            font-family: var(--font-header); 
+            font-size: 0.95rem;
+        }
+
+        .crew-list { list-style: none; padding: 0; margin: 0; }
+        .crew-list li {
+            padding: 8px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; cursor: pointer;
+            transition: 0.2s;
+        }
+        .crew-list li i { margin-right: 8px; }
+        .crew-list li:hover { background: rgba(128,128,128,0.1); color: var(--theme-color); }
+
+        .grid-options {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .color-circle {
+            width: 25px; height: 25px;
+            border-radius: 50%; cursor: pointer;
+            margin: auto;
+        }
+
+        .icon-box {
+            padding: 8px; cursor: pointer;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .terminal {
+            position: absolute; bottom: 20px; left: 20px;
+            width: 400px; height: 160px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--theme-color);
+            color: var(--theme-color);
+            padding: 10px; font-family: monospace; font-size: 0.8rem;
+            overflow-y: auto; pointer-events: auto;
+            border-radius: 5px;
+        }
+
+        .personal-info {
+            position: absolute; bottom: 20px; right: 20px;
+            background: var(--bg-panel);
+            padding: 15px; pointer-events: auto;
+            border-right: 4px solid var(--theme-color);
+            border-radius: 5px;
+        }
+        .personal-info h4 {
+            margin: 0 0 4px 0;
+            font-family: var(--font-header);
+            color: var(--theme-color);
+        }
+        .personal-info p {
+            margin: 2px 0;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        .pulse-icon {
+            font-size: 32px; color: var(--theme-color);
+            text-shadow: 0 0 15px var(--theme-color);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--theme-color); }
     </style>
 </head>
 <body>
-    <div class="bilgi">
-        <h2>🛰️ ISS Konumu</h2>
-        <p>Enlem: <span id="lat">...</span></p>
-        <p>Boylam: <span id="lon">...</span></p>
-    </div>
-    <div id="map"></div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map').setView([0, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        const ikon = L.icon({iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/International_Space_Station.svg', iconSize: [50, 30]});
-        const marker = L.marker([0, 0], {icon: ikon}).addTo(map);
 
-        async function veriCek() {
-            const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
-            const data = await res.json();
-            document.getElementById('lat').innerText = data.latitude.toFixed(2);
-            document.getElementById('lon').innerText = data.longitude.toFixed(2);
-            marker.setLatLng([data.latitude, data.longitude]);
+    <div id="map"></div>
+
+    <div class="ui-layer">
+        
+        <div class="left-column">
+
+            <!-- ISS SİSTEM PANELİ -->
+            <div class="panel" id="panel-system">
+                <div class="panel-header">
+                    <h2>ISS SİSTEMİ</h2>
+                    <button class="toggle-btn" onclick="togglePanel('panel-system')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-arrow-up-long"></i>İrtifa</span>
+                        <span class="stat-value" id="alt-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-gauge-high"></i>Hız</span>
+                        <span class="stat-value" id="speed-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-arrows-up-down"></i>Enlem</span>
+                        <span class="stat-value" id="lat-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-arrows-left-right"></i>Boylam</span>
+                        <span class="stat-value" id="lng-val">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MÜRETTEBAT PANELİ -->
+            <div class="panel" id="panel-crew">
+                <div class="panel-header">
+                    <h3>MÜRETTEBAT</h3>
+                    <button class="toggle-btn" onclick="togglePanel('panel-crew')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <ul class="crew-list" id="crew-list"></ul>
+                </div>
+            </div>
+
+            <!-- GÜNEŞ SİSTEMİ MESAFELERİ PANELİ -->
+            <div class="panel" id="panel-distances">
+                <div class="panel-header">
+                    <h3>MESAFELER</h3>
+                    <button class="toggle-btn" onclick="togglePanel('panel-distances')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content" style="font-size:0.9rem; color:var(--text-sub);">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-person"></i>
+                            <span>Sana Olan Uzaklık (ISS)</span>
+                        </span>
+                        <span class="stat-value" id="you-dist-val">--</span>
+                    </div>
+                    <hr style="border-color: var(--border-color); margin:8px 0;">
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-earth-europe"></i>Dünya (Referans)</span>
+                        <span class="stat-value">0 km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-moon"></i>Ay</span>
+                        <span class="stat-value">384.400 km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-mercury"></i>Merkür</span>
+                        <span class="stat-value">77 M km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-venus"></i>Venüs</span>
+                        <span class="stat-value">41 M km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-mars"></i>Mars</span>
+                        <span class="stat-value">78 M km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Jüpiter</span>
+                        <span class="stat-value">778 M km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Satürn</span>
+                        <span class="stat-value">1.4 B km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Uranüs</span>
+                        <span class="stat-value">2.9 B km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Neptün</span>
+                        <span class="stat-value">4.5 B km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-sun"></i>Güneş</span>
+                        <span class="stat-value">149.6 M km</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-star"></i>Plüton</span>
+                        <span class="stat-value">5.9 B km</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right-column">
+            <div class="panel">
+                <div class="panel-header"><h3>SİSTEM AYARLARI</h3></div>
+
+                <button onclick="toggleTheme()" id="theme-toggle-btn"
+                        style="padding: 8px; border:none; background: var(--theme-color); cursor:pointer; margin-bottom:10px; border-radius:3px;">
+                    <i class="fa-solid fa-sun"></i> Tema Değiştir
+                </button>
+
+                <label style="font-size:0.8rem; color:var(--text-sub);">TEMA RENGİ</label>
+                <div class="grid-options" id="color-grid" style="margin-bottom:12px;"></div>
+
+                <label style="font-size:0.8rem; color:var(--text-sub);">HARİTA İKONU</label>
+                <div class="grid-options" id="icon-grid"></div>
+            </div>
+        </div>
+
+        <div class="terminal" id="terminal">
+            <div>[SİSTEM] Başlatılıyor...</div>
+        </div>
+
+        <div class="personal-info">
+            <h4>Murat Tokaç</h4>
+            <p>25170201029</p>
+            <p>Arka Yüz Yazılım Geliştirme</p>
+            <p>Öğr. Gör. Volkan Cantemir</p>
+        </div>
+
+    </div>
+
+<script>
+/* ========= DEĞİŞKENLER ========= */
+let map, issMarker, polyline;
+let pathHistory = [];
+let currentIcon = "fa-satellite";
+let isLightMode = false;
+
+// Gerçek ISS API
+const ISS_API_URL = "https://api.wheretheiss.at/v1/satellites/25544";
+
+// Kullanıcı konumu
+let userLat = null;
+let userLng = null;
+
+/* ========= BAŞLANGIÇ ========= */
+window.onload = () => {
+    initMap();
+    renderCrew();
+    renderColors();
+    renderIcons();
+    initUserLocation();
+    startIssTracking();
+};
+
+/* ========= HARİTA ========= */
+function initMap() {
+    map = L.map("map", { zoomControl: false, attributionControl: false }).setView([0,0], 3);
+
+    setMapTiles(false);
+
+    polyline = L.polyline(
+        [], 
+        { color: getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim(), weight: 2 }
+    ).addTo(map);
+
+    createMarker([0,0]);
+}
+
+function setMapTiles(light) {
+    map.eachLayer(l => { if(l instanceof L.TileLayer) map.removeLayer(l); });
+
+    const url = light
+        ? "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
+    L.tileLayer(url, { maxZoom: 19 }).addTo(map);
+}
+
+function createMarker(latlng) {
+    if (issMarker) map.removeLayer(issMarker);
+
+    const iconHtml = `<i class="fa-solid ${currentIcon} pulse-icon"></i>`;
+    const divIcon = L.divIcon({
+        html: iconHtml,
+        className: "",
+        iconSize: [40,40],
+        iconAnchor: [20,20]
+    });
+
+    issMarker = L.marker(latlng, {icon: divIcon}).addTo(map);
+}
+
+/* ========= GERÇEK ISS TAKİBİ ========= */
+function startIssTracking() {
+    fetchAndUpdateIss();
+    setInterval(fetchAndUpdateIss, 3000);
+}
+
+async function fetchAndUpdateIss() {
+    try {
+        const response = await fetch(ISS_API_URL);
+        const data = await response.json();
+
+        const lat = data.latitude;
+        const lng = data.longitude;
+        const alt = data.altitude;   // km
+        const speed = data.velocity; // km/h
+
+        const pos = [lat, lng];
+
+        // Marker güncelle
+        issMarker.setLatLng(pos);
+
+        // Rota geçmişi
+        pathHistory.push(pos);
+        if (pathHistory.length > 300) pathHistory.shift();
+        polyline.setLatLngs(pathHistory);
+
+        // Panel değerleri
+        document.getElementById("lat-val").innerText = lat.toFixed(4);
+        document.getElementById("lng-val").innerText = lng.toFixed(4);
+        document.getElementById("alt-val").innerText = alt.toFixed(1) + " km";
+        document.getElementById("speed-val").innerText = speed.toFixed(0) + " km/h";
+
+        // Kullanıcıya olan uzaklık (varsa)
+        if (userLat !== null && userLng !== null) {
+            const d = getDistanceKm(userLat, userLng, lat, lng);
+            document.getElementById("you-dist-val").innerText = d.toFixed(0) + " km";
         }
-        setInterval(veriCek, 2000);
-        veriCek();
-    </script>
+
+        addLog(`Konum güncellendi: ${lat.toFixed(2)}, ${lng.toFixed(2)}`);
+
+    } catch (e) {
+        addLog("HATA: ISS konumu alınamadı.");
+        console.error(e);
+    }
+}
+
+/* ========= KULLANICI KONUMU ========= */
+function initUserLocation() {
+    if (!navigator.geolocation) {
+        addLog("Tarayıcı konum servisini desteklemiyor.");
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
+            addLog("Kullanıcı konumu alındı.");
+        },
+        (err) => {
+            addLog("Kullanıcı konumu alınamadı (izin verilmedi).");
+        }
+    );
+}
+
+// Haversine formülü (km)
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Dünya yarıçapı km
+    const toRad = deg => deg * Math.PI / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+/* ========= PANEL & LOG ========= */
+function togglePanel(id) {
+    const p = document.getElementById(id);
+    p.classList.toggle("minimized");
+}
+
+function addLog(msg) {
+    const term = document.getElementById("terminal");
+    const t = new Date().toLocaleTimeString("tr-TR");
+    term.innerHTML += `<div>[${t}] ${msg}</div>`;
+    term.scrollTop = term.scrollHeight;
+}
+
+/* ========= MÜRETTEBAT ========= */
+function renderCrew() {
+    const crew = [
+        "Oleg Kononenko","Nikolai Chub","Loral O'Hara",
+        "Jasmin Moghbeli","Satoshi Furukawa","Konstantin Borisov","Andreas Mogensen"
+    ];
+    const list = document.getElementById("crew-list");
+
+    crew.forEach(name => {
+        const li = document.createElement("li");
+        li.innerHTML = `<i class="fa-solid fa-user-astronaut"></i> ${name}`;
+        li.onclick = () => {
+            window.open(`https://tr.wikipedia.org/wiki/${name.replace(/ /g,"_")}`, "_blank");
+            addLog(`Wikipedia açılıyor: ${name}`);
+        };
+        list.appendChild(li);
+    });
+}
+
+/* ========= TEMA & GÖRSEL AYARLAR ========= */
+function toggleTheme() {
+    isLightMode = !isLightMode;
+
+    const btn = document.getElementById("theme-toggle-btn");
+
+    if(isLightMode){
+        document.body.classList.add("light-mode");
+        setMapTiles(true);
+        btn.innerHTML = '<i class="fa-solid fa-moon"></i> Tema Değiştir';
+        btn.style.background = "#333";
+        btn.style.color = "#fff";
+    } else {
+        document.body.classList.remove("light-mode");
+        setMapTiles(false);
+        btn.innerHTML = '<i class="fa-solid fa-sun"></i> Tema Değiştir';
+        btn.style.background = "var(--theme-color)";
+        btn.style.color = "#000";
+    }
+}
+
+function renderColors() {
+    const colors = [
+        "#00ff9d","#00d2ff","#ff0055","#ffcc00",
+        "#9d00ff","#ffffff","#ff6600","#00ff00",
+        "#ff00ff","#00ffff","#ffff00","#ff0000"
+    ];
+    const grid = document.getElementById("color-grid");
+
+    colors.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "color-circle";
+        div.style.background = c;
+        div.onclick = () => {
+            document.documentElement.style.setProperty("--theme-color", c);
+            polyline.setStyle({color: c});
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderIcons() {
+    const icons = [
+        "fa-satellite","fa-rocket","fa-user-astronaut",
+        "fa-meteor","fa-earth-americas","fa-globe","fa-shuttle-space"
+    ];
+    const grid = document.getElementById("icon-grid");
+
+    icons.forEach(i => {
+        const div = document.createElement("div");
+        div.className = "icon-box";
+        div.innerHTML = `<i class="fa-solid ${i}"></i>`;
+        div.onclick = () => {
+            currentIcon = i;
+            createMarker(issMarker.getLatLng());
+            addLog(`İkon değiştirildi: ${i}`);
+        };
+        grid.appendChild(div);
+    });
+}
+</script>
 </body>
 </html>
