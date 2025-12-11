@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.1</title>
+    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.2</title>
     
     <!-- Fontlar ve ikonlar -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
@@ -24,7 +24,6 @@
             --font-header: 'Orbitron', sans-serif;
         }
 
-        /* AÇIK TEMA */
         body.light-mode {
             --bg-panel: rgba(240, 240, 240, 0.9);
             --text-main: #1a1a1a;
@@ -85,7 +84,9 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
         }
-        .panel.minimized .panel-content { display: none; }
+        .panel.minimized .panel-content {
+            display: none;
+        }
 
         .panel-header {
             display: flex;
@@ -111,7 +112,7 @@
             color: #000;
             padding: 2px 6px;
             border-radius: 4px;
-            margin-right: 8px;
+            margin-left: 8px;
         }
 
         .toggle-btn {
@@ -205,66 +206,60 @@
         }
 
         /* TERMINAL */
-    .terminal {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    width: 280px;
-    height: 120px;
-    background: rgba(0,0,0,0.85);
-    border: 1px solid var(--theme-color);
-    color: var(--theme-color);
-    padding: 8px;
-    font-family: monospace;
-    font-size: 0.75rem;
-    overflow-y: auto;
-    pointer-events: auto;
-    border-radius: 6px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    opacity: 1;
-    transform: scale(1);
-    transform-origin: bottom left;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    z-index: 1200;
-}
+        .terminal {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            height: 120px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid var(--theme-color);
+            color: var(--theme-color);
+            padding: 8px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-y: auto;
+            pointer-events: auto;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+            opacity: 1;
+            transform: scale(1);
+            transform-origin: bottom left;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 1200;
+        }
+        .terminal--hidden {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
 
-/* Gizli hali için KESİNLİKLE bu sınıfı kullanacağız */
-.terminal--hidden {
-    opacity: 0;
-    transform: scale(0.9);
-    pointer-events: none;
-}
-
-
-        /* TOGGLE BUTON */
-<!-- Terminal Toggle Butonu (sol altta) -->
-<button id="terminal-toggle" onclick="toggleTerminalWindow()"
-        style="
-            position:absolute;
-            bottom:150px;
-            left:20px;
-            padding:6px 10px;
-            font-size:0.75rem;
-            background:var(--theme-color);
-            color:#000;
-            border:none;
-            border-radius:999px;
-            cursor:pointer;
-            z-index:1300;
-            display:flex;
-            align-items:center;
-            gap:6px;
-            box-shadow:0 0 10px rgba(0,0,0,0.5);
-        ">
-    <i class="fa-solid fa-terminal"></i>
-    <span>Terminal</span>
-</button>
-
-<!-- Terminal (başlangıçta açık istersen class'tan terminal--hidden'ı kaldır) -->
-<div class="terminal" id="terminal">
-    <div>[SİSTEM] Başlatılıyor...</div>
-</div>
-
+        /* TERMINAL TOGGLE BUTON */
+        #terminal-toggle {
+            position: absolute;
+            bottom: 150px;
+            left: 20px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            background: var(--theme-color);
+            color: #000;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            z-index: 1300;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        #terminal-toggle i {
+            font-size: 0.8rem;
+        }
+        #terminal-toggle:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 14px rgba(0,0,0,0.7);
+        }
 
         /* KİŞİSEL BİLGİ KARTI */
         .personal-info {
@@ -310,7 +305,7 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--theme-color); }
 
-        /* RESPONSIVE KÜÇÜK EKRAN (basic) */
+        /* RESPONSIVE KÜÇÜK EKRAN */
         @media (max-width: 900px) {
             .ui-layer {
                 flex-direction: column;
@@ -341,7 +336,7 @@
                 <div class="panel-header">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <h2>ISS SİSTEMİ</h2>
-                        <span class="version-badge">CANLI V7.1</span>
+                        <span class="version-badge">CANLI V7.2</span>
                     </div>
                     <button class="toggle-btn" onclick="togglePanel('panel-system')">
                         <i class="fa-solid fa-minus"></i>
@@ -388,7 +383,7 @@
                 </div>
             </div>
 
-            <!-- MESAFELER PANELİ (SADELEŞTİRİLMİŞ) -->
+            <!-- SADE MESAFELER PANELİ -->
             <div class="panel" id="panel-distances">
                 <div class="panel-header">
                     <h3>MESAFELER</h3>
@@ -424,34 +419,39 @@
         </div>
 
         <div class="right-column">
-            <div class="panel">
+            <!-- AYARLAR PANELİ ARTIK AÇILIP KAPANIYOR -->
+            <div class="panel" id="panel-settings">
                 <div class="panel-header">
                     <h3>SİSTEM AYARLARI</h3>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <span style="font-size:0.85rem;">ARAYÜZ MODU</span>
-                    <button onclick="toggleTheme()" id="theme-toggle-btn"
-                        style="padding: 6px 10px; border:none; background: var(--theme-color); cursor:pointer; border-radius:4px; font-size:0.8rem; font-weight:bold; display:flex; align-items:center; gap:6px;">
-                        <i class="fa-solid fa-sun"></i> GÜNDÜZ
+                    <button class="toggle-btn" onclick="togglePanel('panel-settings')">
+                        <i class="fa-solid fa-minus"></i>
                     </button>
                 </div>
+                <div class="panel-content">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <span style="font-size:0.85rem;">ARAYÜZ MODU</span>
+                        <button onclick="toggleTheme()" id="theme-toggle-btn"
+                            style="padding: 6px 10px; border:none; background: var(--theme-color); cursor:pointer; border-radius:4px; font-size:0.8rem; font-weight:bold; display:flex; align-items:center; gap:6px;">
+                            <i class="fa-solid fa-sun"></i> GÜNDÜZ
+                        </button>
+                    </div>
 
-                <label style="font-size:0.8rem; color:var(--text-sub);">TEMA RENGİ</label>
-                <div class="grid-options" id="color-grid" style="margin-bottom:12px;"></div>
+                    <label style="font-size:0.8rem; color:var(--text-sub);">TEMA RENGİ</label>
+                    <div class="grid-options" id="color-grid" style="margin-bottom:12px;"></div>
 
-                <label style="font-size:0.8rem; color:var(--text-sub);">HARİTA İKONU</label>
-                <div class="grid-options" id="icon-grid"></div>
+                    <label style="font-size:0.8rem; color:var(--text-sub);">HARİTA İKONU</label>
+                    <div class="grid-options" id="icon-grid"></div>
+                </div>
             </div>
         </div>
 
         <!-- Terminal Toggle Butonu -->
-        <button id="terminal-toggle" onclick="toggleTerminalWindow()">
+        <button id="terminal-toggle" onclick="toggleTerminal()">
             <i class="fa-solid fa-terminal"></i>
             <span>Terminal</span>
         </button>
 
-        <!-- Terminal (BAŞLANGIÇTA AÇIK, İSTEĞE GÖRE KAPANIR) -->
+        <!-- Terminal (başlangıçta açık, butonla kapanıp açılacak) -->
         <div class="terminal" id="terminal">
             <div>[SİSTEM] Başlatılıyor...</div>
         </div>
@@ -644,7 +644,7 @@ function addLog(msg) {
 }
 
 /* ========= TERMINAL TOGGLE ========= */
-function toggleTerminalWindow() {
+function toggleTerminal() {
     const term = document.getElementById("terminal");
     term.classList.toggle("terminal--hidden");
 }
