@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.0</title>
+    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.1</title>
     
     <!-- Fontlar ve ikonlar -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
@@ -227,7 +227,7 @@
             transition: opacity 0.25s ease, transform 0.25s ease;
             z-index: 1200;
         }
-        .terminal.hidden {
+        .terminal--hidden {
             opacity: 0;
             transform: scale(0.9);
             pointer-events: none;
@@ -304,7 +304,7 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--theme-color); }
 
-        /* RESPONSIVE KÜÇÜK EKRAN (opsiyonel basic) */
+        /* RESPONSIVE KÜÇÜK EKRAN (basic) */
         @media (max-width: 900px) {
             .ui-layer {
                 flex-direction: column;
@@ -335,7 +335,7 @@
                 <div class="panel-header">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <h2>ISS SİSTEMİ</h2>
-                        <span class="version-badge">CANLI V7.0</span>
+                        <span class="version-badge">CANLI V7.1</span>
                     </div>
                     <button class="toggle-btn" onclick="togglePanel('panel-system')">
                         <i class="fa-solid fa-minus"></i>
@@ -382,7 +382,7 @@
                 </div>
             </div>
 
-            <!-- MESAFELER PANELİ -->
+            <!-- MESAFELER PANELİ (SADELEŞTİRİLMİŞ) -->
             <div class="panel" id="panel-distances">
                 <div class="panel-header">
                     <h3>MESAFELER</h3>
@@ -411,55 +411,6 @@
                             <span>Ay'a Uzaklık (ISS)</span>
                         </span>
                         <span class="stat-value" id="moon-dist-val">--</span>
-                    </div>
-
-                    <hr style="border-color: var(--border-color); margin:8px 0;">
-
-                    <div class="stat-row">
-                        <span class="stat-label">
-                            <i class="fa-solid fa-earth-europe"></i>Dünya (Referans)
-                        </span>
-                        <span class="stat-value">0 km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-moon"></i>Ay</span>
-                        <span class="stat-value">384.400 km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-mercury"></i>Merkür</span>
-                        <span class="stat-value">77 M km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-venus"></i>Venüs</span>
-                        <span class="stat-value">41 M km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-mars"></i>Mars</span>
-                        <span class="stat-value">78 M km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Jüpiter</span>
-                        <span class="stat-value">778 M km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Satürn</span>
-                        <span class="stat-value">1.4 B km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Uranüs</span>
-                        <span class="stat-value">2.9 B km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-planet-ringed"></i>Neptün</span>
-                        <span class="stat-value">4.5 B km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-sun"></i>Güneş</span>
-                        <span class="stat-value">149.6 M km</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-star"></i>Plüton</span>
-                        <span class="stat-value">5.9 B km</span>
                     </div>
                 </div>
             </div>
@@ -494,8 +445,8 @@
             <span>Terminal</span>
         </button>
 
-        <!-- Terminal -->
-        <div class="terminal hidden" id="terminal">
+        <!-- Terminal (BAŞLANGIÇTA AÇIK, İSTEĞE GÖRE KAPANIR) -->
+        <div class="terminal" id="terminal">
             <div>[SİSTEM] Başlatılıyor...</div>
         </div>
 
@@ -689,7 +640,7 @@ function addLog(msg) {
 /* ========= TERMINAL TOGGLE ========= */
 function toggleTerminalWindow() {
     const term = document.getElementById("terminal");
-    term.classList.toggle("hidden");
+    term.classList.toggle("terminal--hidden");
 }
 
 /* ========= MÜRETTEBAT ========= */
