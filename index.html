@@ -312,6 +312,14 @@
         ::-webkit-scrollbar-thumb { background: var(--theme-color); }
 
         /* 📱 MOBİL DÜZEN */
+
+                @media (max-width: 900px) {
+            .panel {
+                margin: 0 5px;   /* Sağ-sol boşluk eklendi */
+            }
+        }
+
+        
         @media (max-width: 900px) {
             body, html {
                 overflow: auto; /* mobilde kaydırma serbest */
@@ -342,7 +350,7 @@
 
             /* Terminal ve butonu ekran genişliğine uyumlu */
             #terminal-toggle {
-                bottom: 10px;
+                bottom: 60px;
                 left: 10px;
                 padding: 6px 10px;
                 font-size: 0.7rem;
