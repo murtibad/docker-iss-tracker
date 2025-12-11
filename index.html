@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.3</title>
+    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.4</title>
     
     <!-- Fontlar ve ikonlar -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
 
     <style>
         :root {
-            --theme-color: #00ff9d;
+            --theme-color: #ff0c7a;
             --bg-panel: rgba(10, 15, 20, 0.85);
             --text-main: #ffffff;
             --text-sub: #aaaaaa;
@@ -221,18 +221,18 @@
             position: absolute;
             bottom: 20px;
             left: 20px;
-            width: 280px;
-            height: 120px;
-            background: rgba(0,0,0,0.85);
+            width: 320px;
+            height: 140px;
+            background: rgba(5, 8, 15, 0.94);
             border: 1px solid var(--theme-color);
             color: var(--theme-color);
-            padding: 8px;
+            padding: 8px 10px;
             font-family: monospace;
             font-size: 0.75rem;
             overflow-y: auto;
             pointer-events: auto;
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+            border-radius: 8px;
+            box-shadow: 0 0 16px rgba(0,0,0,0.6);
             opacity: 1;
             transform: scale(1);
             transform-origin: bottom left;
@@ -248,9 +248,9 @@
         /* TERMINAL TOGGLE BUTON */
         #terminal-toggle {
             position: absolute;
-            bottom: 150px;
+            bottom: 170px;
             left: 20px;
-            padding: 6px 10px;
+            padding: 6px 12px;
             font-size: 0.75rem;
             background: var(--theme-color);
             color: #000;
@@ -260,7 +260,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: 0 0 14px rgba(0,0,0,0.6);
+            pointer-events: auto; /* BUNUN SAYESİNDE TIKLANABİLİR */
         }
         #terminal-toggle i {
             font-size: 0.8rem;
@@ -341,7 +342,7 @@
                 <div class="panel-header">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <h2>ISS SİSTEMİ</h2>
-                        <span class="version-badge">CANLI V7.3</span>
+                        <span class="version-badge">CANLI V7.4</span>
                     </div>
                     <button class="toggle-btn clickable" onclick="togglePanel('panel-system')">
                         <i class="fa-solid fa-minus"></i>
@@ -617,7 +618,7 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
     const toRad = deg => deg * Math.PI / 180;
 
     const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
+    const dLon = toRad(lat2 - lon1);
 
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -698,7 +699,7 @@ function toggleTheme() {
 
 function renderColors() {
     const colors = [
-        "#00ff9d","#00d2ff","#ff0055","#ffcc00",
+        "#ff0c7a","#00d2ff","#ff0055","#ffcc00",
         "#9d00ff","#ffffff","#ff6600","#00ff00",
         "#ff00ff","#00ffff","#ffff00","#ff0000"
     ];
