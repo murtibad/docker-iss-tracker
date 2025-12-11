@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.5</title>
+    <title>ISS TAKİP SİSTEMİ - ULTIMATE V7.6</title>
     
     <!-- Fontlar ve ikonlar -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
@@ -311,15 +311,29 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--theme-color); }
 
-        /* 📱 MOBİL DÜZEN */
-
-                @media (max-width: 900px) {
-            .panel {
-                margin: 0 5px;   /* Sağ-sol boşluk eklendi */
-            }
+        /* ⚙️ MOBİL AYAR ÇARKI BUTONU */
+        .settings-toggle {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            border: none;
+            background: rgba(0,0,0,0.7);
+            color: var(--theme-color);
+            display: none; /* desktop'ta görünmez */
+            align-items: center;
+            justify-content: center;
+            z-index: 1400;
+            pointer-events: auto;
+            box-shadow: 0 0 12px rgba(0,0,0,0.6);
+        }
+        .settings-toggle i {
+            font-size: 1.1rem;
         }
 
-        
+        /* 📱 MOBİL DÜZEN */
         @media (max-width: 900px) {
             body, html {
                 overflow: auto; /* mobilde kaydırma serbest */
@@ -346,11 +360,12 @@
 
             .panel {
                 backdrop-filter: blur(4px);
+                margin: 0 5px;
             }
 
             /* Terminal ve butonu ekran genişliğine uyumlu */
             #terminal-toggle {
-                bottom: 60px;
+                bottom: 10px;
                 left: 10px;
                 padding: 6px 10px;
                 font-size: 0.7rem;
@@ -368,12 +383,41 @@
                 margin-top: 10px;
                 width: 100%;
             }
+
+            /* Mobilde ayar çarkını göster */
+            .settings-toggle {
+                display: flex;
+            }
+
+            /* UI kapalı iken (gear ile) panelleri tamamen sakla */
+            body.ui-collapsed .ui-layer,
+            body.ui-collapsed #terminal-toggle,
+            body.ui-collapsed .terminal,
+            body.ui-collapsed .personal-info {
+                display: none;
+            }
+
+            body.ui-collapsed #map {
+                filter: none;
+            }
+        }
+
+        /* Desktop'ta settings-toggle görünmesin */
+        @media (min-width: 901px) {
+            .settings-toggle {
+                display: none;
+            }
         }
     </style>
 </head>
-<body>
+<body class="ui-collapsed"><!-- mobilde başlangıçta UI kapalı olsun -->
 
     <div id="map"></div>
+
+    <!-- Mobil için ayarlar çarkı -->
+    <button id="settings-toggle" class="settings-toggle clickable" onclick="toggleMobileUI()">
+        <i id="settings-toggle-icon" class="fa-solid fa-gear"></i>
+    </button>
 
     <div class="ui-layer">
         
@@ -384,7 +428,7 @@
                 <div class="panel-header">
                     <div style="display:flex; align-items:center; gap:8px;">
                         <h2>ISS SİSTEMİ</h2>
-                        <span class="version-badge">CANLI V7.5</span>
+                        <span class="version-badge">CANLI V7.6</span>
                     </div>
                     <button class="toggle-btn clickable" onclick="togglePanel('panel-system')">
                         <i class="fa-solid fa-minus"></i>
@@ -696,6 +740,17 @@ function addLog(msg) {
 function toggleTerminal() {
     const term = document.getElementById("terminal");
     term.classList.toggle("terminal--hidden");
+}
+
+/* ========= MOBİL UI AÇ/KAPA (⚙️) ========= */
+function toggleMobileUI() {
+    document.body.classList.toggle("ui-collapsed");
+    const icon = document.getElementById("settings-toggle-icon");
+    if (document.body.classList.contains("ui-collapsed")) {
+        icon.className = "fa-solid fa-gear";
+    } else {
+        icon.className = "fa-solid fa-xmark";
+    }
 }
 
 /* ========= MÜRETTEBAT ========= */
