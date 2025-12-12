@@ -781,13 +781,13 @@ function toggleTheme() {
     if (isLightMode) {
         document.body.classList.add("light-mode");
         setMapTiles(true);
-        btn.innerHTML = '<i class="fa-solid fa-moon"></i> GECE';
+        btn.innerHTML = '<i class="fa-solid fa-moon"></i> KARANLIK TEMA';
         btn.style.background = "#333";
         btn.style.color = "#fff";
     } else {
         document.body.classList.remove("light-mode");
         setMapTiles(false);
-        btn.innerHTML = '<i class="fa-solid fa-sun"></i> GÜNDÜZ';
+        btn.innerHTML = '<i class="fa-solid fa-sun"></i> AYDINLIK TEMA';
         btn.style.background = "var(--theme-color)";
         btn.style.color = "#000";
     }
