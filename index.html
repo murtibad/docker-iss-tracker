@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISS TAKİP SİSTEMİ</title>
+    <title>ISS TAKİP SİSTEMİ | CYBERPUNK HUD</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -149,26 +149,18 @@
             box-sizing: border-box;
         }
 
-        .left-column {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 350px;
-            pointer-events: auto;
-            max-height: 95vh;
-            overflow-y: auto;
-        }
-
-        /* sağ kolon tekrar sağa yaslı */
+        .left-column,
         .right-column {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            width: 350px;
+            gap: 12px;
+            width: 300px;              /* kutular küçültüldü */
             pointer-events: auto;
-            max-height: 95vh;
+            max-height: 80vh;          /* daha kısa, altta çakışmasın */
             overflow-y: auto;
         }
+
+        .right-column { margin-bottom: 40px; }
 
         .clickable {
             cursor: none;
@@ -182,10 +174,11 @@
             background: var(--bg-panel);
             border: 1px solid var(--theme-color);
             border-radius: 8px;
-            padding: 15px;
+            padding: 12px;
             backdrop-filter: blur(8px);
             box-shadow: 0 0 15px rgba(255, 12, 122, 0.2), inset 0 0 20px rgba(0,0,0,0.5); 
             transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
         .panel.minimized .panel-content { display: none; }
 
@@ -193,9 +186,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 5px;
+            padding-bottom: 4px;
         }
 
         @keyframes glitch {
@@ -212,7 +205,7 @@
             color: var(--theme-color);
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         h2 {
             animation: glitch 4s infinite;
@@ -223,16 +216,16 @@
             font-size: 0.6rem;
             background: var(--theme-color);
             color: #000;
-            padding: 2px 6px;
+            padding: 1px 5px;
             border-radius: 4px;
-            margin-left: 8px;
+            margin-left: 6px;
         }
 
         .toggle-btn {
             background: transparent;
             border: none;
             color: var(--text-sub);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .stat-row {
@@ -240,27 +233,27 @@
             justify-content: space-between;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
         }
         .stat-label { display: flex; align-items: center; gap: 6px; }
-        .stat-label i { min-width: 16px; text-align: center; }
+        .stat-label i { min-width: 14px; text-align: center; font-size: 0.8rem; }
         .stat-value {
             font-weight: bold;
             font-family: var(--font-header);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--theme-color);
         }
 
         .crew-list { list-style: none; margin: 0; padding: 0; }
         .crew-list li {
-            padding: 8px;
+            padding: 6px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
-        .crew-list li i { margin-right: 8px; color: var(--theme-color); }
+        .crew-list li i { margin-right: 6px; color: var(--theme-color); }
         .crew-list li:hover {
             background: rgba(128,128,128,0.1);
             color: var(--theme-color);
@@ -269,33 +262,34 @@
         .grid-options {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
         .color-circle {
-            width: 25px; height: 25px;
+            width: 22px; height: 22px;
             border-radius: 50%;
             border: 2px solid transparent;
             margin: auto;
         }
         .color-circle:hover { border-color: var(--text-main); }
         .icon-box {
-            padding: 8px;
+            padding: 6px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             text-align: center;
+            font-size: 0.85rem;
         }
         .icon-box:hover { background: var(--theme-color); color: #000; }
 
         .terminal {
             position: absolute;
             bottom: 20px; left: 20px;
-            width: 320px; height: 140px;
+            width: 300px; height: 130px;
             background: rgba(5, 8, 15, 0.94);
             border: 1px solid var(--theme-color);
             color: var(--theme-color);
-            padding: 8px 10px;
+            padding: 6px 8px;
             font-family: monospace;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             overflow-y: auto;
             pointer-events: auto;
             border-radius: 8px;
@@ -305,13 +299,13 @@
         }
         .terminal--hidden { opacity: 0; transform: scale(0.9); pointer-events: none; }
 
-        /* terminal butonu sol panel kolonunun sağına al */
+        /* terminal butonunu sol panel kolonunun sağına al */
         #terminal-toggle {
             position: absolute;
             bottom: 25px;
-            left: 390px; /* 20 padding + 350 left-column + 20 boşluk gibi */
-            padding: 6px 12px;
-            font-size: 0.75rem;
+            left: 340px; /* 20 padding + 300 left-column + 20 boşluk */
+            padding: 5px 10px;
+            font-size: 0.7rem;
             background: var(--theme-color);
             color: #000;
             border: none;
@@ -319,25 +313,25 @@
             z-index: 1300;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             box-shadow: 0 0 14px rgba(0,0,0,0.6);
             pointer-events: auto;
         }
 
-        /* kişisel bilgi kartı biraz yukarı ve dar */
+        /* kişisel bilgi kartı sağ altta, biraz dar */
         .personal-info {
             position: absolute;
-            bottom: 120px;
+            bottom: 20px;
             right: 20px;
-            width: 230px;
+            width: 220px;
             background: var(--bg-panel);
             border-right: 4px solid var(--theme-color);
-            padding: 15px;
+            padding: 12px;
             text-align: right;
             pointer-events: auto;
             border-radius: 6px;
             backdrop-filter: blur(5px);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             z-index: 1100;
             box-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
@@ -345,7 +339,7 @@
             margin: 0 0 4px 0;
             color: var(--theme-color);
             font-family: var(--font-header);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         .personal-info p { margin: 2px 0; color: var(--text-sub); }
 
@@ -453,7 +447,7 @@
             transition: width 0.6s ease-out;
         }
         .panel-note {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             margin-top: 4px;
             color: var(--text-sub);
         }
@@ -478,7 +472,7 @@
         }
 
         #loc-name {
-            max-width: 180px;
+            max-width: 150px;
             display: inline-block;
             white-space: nowrap;
             overflow: hidden;
@@ -518,7 +512,7 @@
         <div class="left-column">
             <div class="panel" id="panel-system">
                 <div class="panel-header">
-                    <div style="display:flex; align-items:center; gap:8px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
                         <h2>ISS SİSTEMİ</h2>
                         <span class="version-badge">CANLI</span>
                     </div>
@@ -576,17 +570,17 @@
                         <i class="fa-solid fa-minus"></i>
                     </button>
                 </div>
-                <div class="panel-content" style="font-size:0.9rem; color:var(--text-sub);">
+                <div class="panel-content" style="font-size:0.85rem; color:var(--text-sub);">
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-person"></i><span>Sana Olan Uzaklık</span></span>
+                        <span class="stat-label"><i class="fa-solid fa-person"></i>Sana Olan Uzaklık</span>
                         <span class="stat-value" id="you-dist-val">--</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-earth-europe"></i><span>Dünya'ya Uzaklık</span></span>
+                        <span class="stat-label"><i class="fa-solid fa-earth-europe"></i>Dünya'ya Uzaklık</span>
                         <span class="stat-value" id="earth-dist-val">--</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-label"><i class="fa-solid fa-moon"></i><span>Ay'a Uzaklık</span></span>
+                        <span class="stat-label"><i class="fa-solid fa-moon"></i>Ay'a Uzaklık</span>
                         <span class="stat-value" id="moon-dist-val">--</span>
                     </div>
                 </div>
@@ -607,7 +601,7 @@
                         <span class="stat-value" id="signal-delay-val">--</span>
                     </div>
                     <p class="panel-note">
-                        Not: Boşluktaki ışık hızına göre teorik bir değerdir.
+                        Not: Boşluktaki ışık hızına göre teorik bir değerdir (yaklaşık).
                     </p>
                 </div>
             </div>
@@ -622,18 +616,18 @@
                     </button>
                 </div>
                 <div class="panel-content">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <span style="font-size:0.85rem;">ARAYÜZ MODU</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span style="font-size:0.8rem;">ARAYÜZ MODU</span>
                         <button onclick="toggleTheme()" id="theme-toggle-btn" class="clickable"
-                            style="padding: 6px 10px; border:none; background: var(--theme-color); border-radius:4px; font-size:0.8rem; font-weight:bold; display:flex; align-items:center; gap:6px;">
+                            style="padding: 5px 9px; border:none; background: var(--theme-color); border-radius:4px; font-size:0.75rem; font-weight:bold; display:flex; align-items:center; gap:5px;">
                             <i class="fa-solid fa-sun"></i> KARANLIK TEMA
                         </button>
                     </div>
 
-                    <label style="font-size:0.8rem; color:var(--text-sub);">TEMA RENGİ</label>
-                    <div class="grid-options" id="color-grid" style="margin-bottom:12px;"></div>
+                    <label style="font-size:0.75rem; color:var(--text-sub);">TEMA RENGİ</label>
+                    <div class="grid-options" id="color-grid" style="margin-bottom:10px;"></div>
 
-                    <label style="font-size:0.8rem; color:var(--text-sub);">HARİTA İKONU</label>
+                    <label style="font-size:0.75rem; color:var(--text-sub);">HARİTA İKONU</label>
                     <div class="grid-options" id="icon-grid"></div>
                 </div>
             </div>
@@ -859,11 +853,11 @@ function hackerTextEffect(elementId, newValue) {
     const element = document.getElementById(elementId);
     if(!element) return;
     
-    const originalText = newValue;
+    const originalText = newValue.toString();
     let iterations = 0;
     const interval = setInterval(() => {
-        element.innerText = element.innerText.split("")
-            .map((letter, index) => {
+        element.innerText = originalText.split("")
+            .map((char, index) => {
                 if(index < iterations) return originalText[index];
                 return Math.floor(Math.random() * 10);
             })
@@ -873,7 +867,7 @@ function hackerTextEffect(elementId, newValue) {
             element.innerText = originalText;
             clearInterval(interval);
         }
-        iterations += 1/2; 
+        iterations += 0.5; 
     }, 30);
 }
 
@@ -955,8 +949,11 @@ async function fetchAndUpdateIss() {
         if (userLat !== null && userLng !== null) {
             const d = getDistanceKm(userLat, userLng, lat, lng);
             document.getElementById("you-dist-val").innerText = d.toFixed(0) + " km";
-            updateSignalDelay(d);
+        } else {
+            document.getElementById("you-dist-val").innerText = "--";
         }
+
+        updateSignalDelay(lat, lng);
 
         addLog(`KONUM: ${lat.toFixed(2)}, ${lng.toFixed(2)} | İrtifa: ${alt.toFixed(1)} km`);
 
@@ -985,7 +982,7 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const toRad = deg => deg * Math.PI / 180;
     const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lat2 - lon1);
+    const dLon = toRad(lon2 - lon1);  // HATA DÜZELTİLDİ
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
@@ -1168,11 +1165,22 @@ function updateDayNightAndSolar(lat, lng) {
     document.getElementById("solar-eff-bar-fill").style.width = solarEff + "%";
 }
 
-function updateSignalDelay(distanceKm) {
-    const c_km_s = 299792.458;
-    const delayMs = (distanceKm / c_km_s) * 1000;
+/* === SİNYAL GECİKMESİ (her durumda çalışır) === */
+function updateSignalDelay(lat, lng) {
+    // Kullanıcı konumu varsa onu kullan; yoksa Ankara'yı referans al (yaklaşık)
+    let groundLat = userLat;
+    let groundLng = userLng;
+
+    if (groundLat === null || groundLng === null) {
+        groundLat = 39.9;   // Ankara approx
+        groundLng = 32.8;
+    }
+
+    const distKm = getDistanceKm(groundLat, groundLng, lat, lng);
+    const delayMs = (distKm * 1000) / 300000; // ışık hızı ~300,000 km/s
+
     document.getElementById("signal-delay-val").innerText =
-        delayMs.toFixed(2) + " ms (teorik)";
+        delayMs.toFixed(2) + " ms";
 }
 
 async function updateEnvironment(lat, lng) {
