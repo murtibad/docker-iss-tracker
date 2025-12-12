@@ -28,7 +28,7 @@
             --text-sub: #555555;
             --border-color: rgba(0, 0, 0, 0.1);
             background-color: #f0f0f0;
-            cursor: auto !important; /* Light modda normal mouse */
+            cursor: auto !important;
         }
 
         body, html {
@@ -40,7 +40,7 @@
             font-family: var(--font-main);
             color: var(--text-main);
             overflow: hidden;
-            cursor: none; /* Mouse'u gizle, özel imleç gelecek */
+            cursor: none;
         }
 
         /* === 1. CRT SCANLINES EFEKTİ === */
@@ -71,7 +71,7 @@
                 linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
             background-size: 50px 50px;
             opacity: 0.15;
-            z-index: 2; /* Haritanın üstünde */
+            z-index: 2;
             pointer-events: none;
         }
 
@@ -166,22 +166,20 @@
         }
 
         .clickable {
-            cursor: none; /* Mouse gizli olduğu için */
+            cursor: none;
             transition: transform 0.18s ease;
         }
         .clickable:hover {
             transform: translateY(-1px) scale(1.03);
-            /* Hover olunca custom cursor da tepki verecek (JS ile) */
         }
 
-        /* PANEL GÜNCELLEMESİ (NEON GLOW) */
+        /* PANEL (NEON GLOW) */
         .panel {
             background: var(--bg-panel);
             border: 1px solid var(--theme-color);
             border-radius: 8px;
             padding: 15px;
             backdrop-filter: blur(8px);
-            /* YENİ IŞIMA EFEKTİ */
             box-shadow: 0 0 15px rgba(255, 12, 122, 0.2), inset 0 0 20px rgba(0,0,0,0.5); 
             transition: all 0.3s ease;
         }
@@ -367,8 +365,8 @@
 
         @media (max-width: 900px) {
             body, html { overflow: auto; cursor: auto; }
-            #custom-cursor { display: none; } /* Mobilde custom cursor kapat */
-            .scanlines, .tech-grid { display: none; } /* Mobilde performansı koru */
+            #custom-cursor { display: none; }
+            .scanlines, .tech-grid { display: none; }
             
             .ui-layer { position: relative; flex-direction: column; padding: 10px; pointer-events: none; }
             .left-column, .right-column { width: 100%; max-height: none; overflow: visible; }
@@ -384,6 +382,146 @@
             body.ui-collapsed .personal-info { display: none; }
         }
         @media (min-width: 901px) { .settings-toggle { display: none; } }
+
+        /* === VİGNETTE (HAFİF KARANLIK KÖŞELER) === */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            box-shadow: inset 0 0 160px 60px rgba(0,0,0,0.75);
+        }
+        body.light-mode .vignette {
+            box-shadow: inset 0 0 140px 40px rgba(0,0,0,0.35);
+        }
+
+        /* === HUD CORNER BRACKETS === */
+        .hud-corner {
+            position: fixed;
+            width: 70px;
+            height: 70px;
+            border: 2px solid var(--theme-color);
+            z-index: 1200;
+            pointer-events: none;
+            box-shadow: 0 0 8px rgba(0,0,0,0.8);
+        }
+        .hud-corner--tl {
+            top: 8px; left: 8px;
+            border-right: none; border-bottom: none;
+        }
+        .hud-corner--tr {
+            top: 8px; right: 8px;
+            border-left: none; border-bottom: none;
+        }
+        .hud-corner--bl {
+            bottom: 8px; left: 8px;
+            border-right: none; border-top: none;
+        }
+        .hud-corner--br {
+            bottom: 8px; right: 8px;
+            border-left: none; border-top: none;
+        }
+
+        /* === SAHTE FREKANS (SİNYAL) GRAFİĞİ === */
+        .freq-graph {
+            position: absolute;
+            bottom: 20px;
+            left: 360px; /* Terminalin yanına hizalanmış */
+            width: 230px;
+            height: 80px;
+            background: rgba(5, 8, 15, 0.94);
+            border: 1px solid var(--theme-color);
+            border-radius: 8px;
+            padding: 6px 8px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            pointer-events: none;
+            z-index: 1150;
+            box-shadow: 0 0 16px rgba(0,0,0,0.7);
+        }
+        .freq-bar {
+            flex: 1;
+            background: var(--theme-color);
+            opacity: 0.7;
+            height: 20%;
+            transition: height 0.15s ease-out, opacity 0.15s ease-out;
+        }
+        @media (max-width: 900px) {
+            .freq-graph {
+                display: none;
+            }
+        }
+
+        /* === GECE / GÜNDÜZ KUŞAĞI (TERMINATOR) === */
+        .terminator {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: linear-gradient(90deg,
+                rgba(0,0,0,0.7) 0%,
+                rgba(0,0,0,0.5) 45%,
+                rgba(0,0,0,0.0) 55%,
+                rgba(255,255,255,0.0) 100%
+            );
+            opacity: 0.6;
+            mix-blend-mode: multiply;
+            transition: transform 0.8s ease-out;
+            transform-origin: 50% 50%;
+        }
+
+        /* === SOLAR PANEL VERİMLİLİK ÇUBUĞU === */
+        .solar-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .solar-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ff90, #ffdd00, #ff6600);
+            transition: width 0.6s ease-out;
+        }
+        .panel-note {
+            font-size: 0.7rem;
+            margin-top: 4px;
+            color: var(--text-sub);
+        }
+
+        /* === DIŞ SICAKLIK TERMOMETRE ÇUBUĞU === */
+        .temp-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .temp-gauge {
+            width: 100%;
+            height: 10px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+            margin-top: 3px;
+        }
+        .temp-gauge-fill {
+            height: 100%;
+            width: 50%;
+            background: linear-gradient(90deg,#00bcd4,#4caf50,#ffeb3b,#ff5722);
+            transition: width 0.5s ease-out;
+        }
+
+        /* Konum panelindeki uzun isimler taşmasın */
+        #loc-name {
+            max-width: 180px;
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body class="ui-collapsed">
@@ -403,6 +541,16 @@
     <div id="custom-cursor"></div>
 
     <div id="map"></div>
+    <!-- Yeni overlayler -->
+    <div id="terminator" class="terminator"></div>
+    <div class="vignette"></div>
+
+    <div class="hud-corner hud-corner--tl"></div>
+    <div class="hud-corner hud-corner--tr"></div>
+    <div class="hud-corner hud-corner--bl"></div>
+    <div class="hud-corner hud-corner--br"></div>
+
+    <div id="freq-graph" class="freq-graph"></div>
 
     <button id="settings-toggle" class="settings-toggle clickable" onclick="toggleMobileUI()">
         <i id="settings-toggle-icon" class="fa-solid fa-gear"></i>
@@ -436,6 +584,18 @@
                     <div class="stat-row">
                         <span class="stat-label"><i class="fa-solid fa-arrows-left-right"></i>Boylam</span>
                         <span class="stat-value" id="lng-val">--</span>
+                    </div>
+
+                    <!-- Dış sıcaklık + termometre -->
+                    <div class="stat-row temp-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-temperature-three-quarters"></i>
+                            Dış Sıcaklık
+                        </span>
+                        <span class="stat-value" id="temp-val">--</span>
+                        <div class="temp-gauge">
+                            <div id="temp-gauge-fill" class="temp-gauge-fill"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -500,6 +660,54 @@
                     <div class="grid-options" id="icon-grid"></div>
                 </div>
             </div>
+
+            <!-- Solar panel verim paneli -->
+            <div class="panel" id="panel-solar">
+                <div class="panel-header">
+                    <h3>SOLAR ARRAY</h3>
+                    <button class="toggle-btn clickable" onclick="togglePanel('panel-solar')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-solar-panel"></i>Enerji Üretimi
+                        </span>
+                        <span class="stat-value" id="solar-eff-val">--</span>
+                    </div>
+                    <div class="solar-bar">
+                        <div id="solar-eff-bar-fill" class="solar-bar-fill"></div>
+                    </div>
+                    <p class="panel-note">
+                        Not: Solar verim, ISS'in gündüz/gece bölgesine göre yaklaşık gösterilir.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Üzerindeki bölge & hava durumu paneli -->
+            <div class="panel" id="panel-env">
+                <div class="panel-header">
+                    <h3>KONUM &amp; HAVA</h3>
+                    <button class="toggle-btn clickable" onclick="togglePanel('panel-env')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-location-dot"></i>Bölge
+                        </span>
+                        <span class="stat-value" id="loc-name">Hesaplanıyor...</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-cloud-sun"></i>Hava Durumu
+                        </span>
+                        <span class="stat-value" id="weather-val">--</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <button id="terminal-toggle" class="clickable" onclick="toggleTerminal()">
@@ -526,6 +734,10 @@ let pathHistory = [];
 let currentIcon = "fa-satellite";
 let isLightMode = false;
 
+let fovPolygon = null;          // Tarama konisi (Field of View)
+let lastEnvUpdateTime = 0;      // Konum & hava için throttle
+let isDaySide = true;           // Solar panel verimi için
+
 const ISS_API_URL = "https://api.wheretheiss.at/v1/satellites/25544";
 const MOON_MEAN_DISTANCE_KM = 384400;
 
@@ -534,7 +746,6 @@ let userLng = null;
 
 /* ========= BAŞLANGIÇ ========= */
 window.onload = () => {
-    // Açılış ekranı zamanlayıcısı
     setTimeout(() => {
         const boot = document.getElementById('boot-screen');
         boot.style.opacity = '0';
@@ -546,6 +757,7 @@ window.onload = () => {
     renderColors();
     renderIcons();
     initUserLocation();
+    initFakeSignal();        // Sinyal grafiği
     startIssTracking();
     addLog("Sistem başlatıldı. Gerçek ISS telemetrisi etkin.");
 };
@@ -553,7 +765,6 @@ window.onload = () => {
 /* ========= CUSTOM CURSOR MANTIĞI ========= */
 document.addEventListener('mousemove', (e) => {
     const cursor = document.getElementById('custom-cursor');
-    // Eğer light moddaysa cursor'u gösterme
     if(isLightMode || window.innerWidth <= 900) {
         cursor.style.display = 'none';
         return;
@@ -626,7 +837,7 @@ function hackerTextEffect(elementId, newValue) {
             .join("");
         
         if(iterations >= originalText.length) {
-            element.innerText = originalText; // Son halini garanti et
+            element.innerText = originalText;
             clearInterval(interval);
         }
         iterations += 1/2; 
@@ -655,6 +866,23 @@ async function fetchAndUpdateIss() {
         pathHistory.push(pos);
         if (pathHistory.length > 300) pathHistory.shift();
         polyline.setLatLngs(pathHistory);
+
+        // Tarama konisi (Field of View)
+        updateFovCone(lat, lng);
+
+        // Dış sıcaklık simülasyonu
+        const temp = computeExteriorTemp(lat);
+        updateTemperatureUI(temp);
+
+        // Gece / gündüz kuşağı + solar panel verimi
+        updateDayNightAndSolar(lat, lng);
+
+        // Konum & hava durumu (60 saniyede bir)
+        const now = Date.now();
+        if (now - lastEnvUpdateTime > 60000) {
+            lastEnvUpdateTime = now;
+            updateEnvironment(lat, lng);
+        }
 
         // Matrix efektiyle güncelle
         hackerTextEffect("lat-val", lat.toFixed(4));
@@ -775,7 +1003,7 @@ function toggleTheme() {
         btn.style.background = "#333";
         btn.style.color = "#fff";
         document.body.style.cursor = "auto";
-        cursor.style.display = 'none'; // Light modda custom cursor gizle
+        cursor.style.display = 'none';
     } else {
         document.body.classList.remove("light-mode");
         setMapTiles(false);
@@ -802,6 +1030,9 @@ function renderColors() {
         div.onclick = () => {
             document.documentElement.style.setProperty("--theme-color", c);
             polyline.setStyle({ color: c });
+            if (fovPolygon) {
+                fovPolygon.setStyle({ color: c, fillColor: c });
+            }
             addLog(`Tema rengi güncellendi: ${c}`);
         };
         grid.appendChild(div);
@@ -825,6 +1056,167 @@ function renderIcons() {
         };
         grid.appendChild(div);
     });
+}
+
+/* ========= TARAMA KONİSİ (FIELD OF VIEW) ========= */
+function clampLat(lat) {
+    return Math.max(-80, Math.min(80, lat));
+}
+
+function updateFovCone(lat, lng) {
+    if (!map) return;
+
+    if (fovPolygon) {
+        map.removeLayer(fovPolygon);
+    }
+
+    const themeColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--theme-color').trim();
+
+    const forwardLng = lng + 25;
+    const halfSpan = 12;
+
+    const p1 = [lat, lng];
+    const p2 = [clampLat(lat + halfSpan), forwardLng];
+    const p3 = [clampLat(lat - halfSpan), forwardLng];
+
+    fovPolygon = L.polygon([p1, p2, p3], {
+        color: themeColor,
+        weight: 1,
+        fillColor: themeColor,
+        fillOpacity: 0.12,
+        interactive: false
+    }).addTo(map);
+}
+
+/* ========= DIŞ SICAKLIK SİMÜLASYONU ========= */
+function computeExteriorTemp(lat) {
+    const base = -80;
+    const amplitude = 35;
+    const factor = Math.cos(Math.abs(lat) * Math.PI / 180);
+    return base + amplitude * factor; // ~ -80 ile -45
+}
+
+function updateTemperatureUI(temp) {
+    const text = temp.toFixed(1) + " °C";
+    hackerTextEffect("temp-val", text);
+
+    const minT = -80;
+    const maxT = -40;
+    const clamped = Math.min(maxT, Math.max(minT, temp));
+    const perc = ((clamped - minT) / (maxT - minT)) * 100;
+
+    const fill = document.getElementById("temp-gauge-fill");
+    if (fill) {
+        fill.style.width = perc + "%";
+    }
+}
+
+/* ========= GECE / GÜNDÜZ + SOLAR PANEL VERİMİ ========= */
+function updateDayNightAndSolar(lat, lng) {
+    const terminator = document.getElementById('terminator');
+    if (terminator) {
+        terminator.style.transform = `rotate(${lng}deg)`;
+    }
+
+    const dayFactor = Math.cos((lng * Math.PI) / 180);
+    isDaySide = dayFactor > 0;
+
+    let solarEff = isDaySide ? 100 : 12;
+    const solarVal = document.getElementById("solar-eff-val");
+    const barFill = document.getElementById("solar-eff-bar-fill");
+
+    if (solarVal) {
+        solarVal.innerText = solarEff + "% " + (isDaySide ? "(Gündüz)" : "(Gece)");
+    }
+    if (barFill) {
+        barFill.style.width = solarEff + "%";
+    }
+}
+
+/* ========= SAHTE FREKANS GRAFİĞİ ========= */
+function initFakeSignal() {
+    const container = document.getElementById("freq-graph");
+    if (!container) return;
+
+    for (let i = 0; i < 24; i++) {
+        const bar = document.createElement("div");
+        bar.className = "freq-bar";
+        container.appendChild(bar);
+    }
+
+    setInterval(() => {
+        const bars = container.querySelectorAll(".freq-bar");
+        bars.forEach(bar => {
+            const h = 10 + Math.random() * 90;
+            bar.style.height = h + "%";
+            bar.style.opacity = 0.4 + Math.random() * 0.6;
+        });
+    }, 120);
+}
+
+/* ========= KONUM + HAVA DURUMU ========= */
+async function updateEnvironment(lat, lng) {
+    try {
+        let locationLabel = "Okyanus Üzeri";
+
+        try {
+            const revRes = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=5&addressdetails=1`
+            );
+            const revData = await revRes.json();
+            const addr = revData.address || {};
+            const city = addr.city || addr.town || addr.village || addr.hamlet || addr.county;
+            const country = addr.country || "";
+            if (country || city) {
+                locationLabel = (city ? city + ", " : "") + country;
+            }
+        } catch (e) {
+            console.warn("Reverse geocoding başarısız", e);
+        }
+
+        const locEl = document.getElementById("loc-name");
+        if (locEl) {
+            locEl.innerText = locationLabel;
+        }
+
+        try {
+            const wRes = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`
+            );
+            const wData = await wRes.json();
+            if (wData && wData.current_weather) {
+                const t = wData.current_weather.temperature;
+                const code = wData.current_weather.weathercode;
+                const desc = weatherCodeToText(code);
+                const wEl = document.getElementById("weather-val");
+                if (wEl) {
+                    wEl.innerText = `${t.toFixed(1)}°C, ${desc}`;
+                }
+            }
+        } catch (e) {
+            console.warn("Hava durumu alınamadı", e);
+        }
+
+        addLog("Konum & hava bilgisi güncellendi.");
+    } catch (e) {
+        addLog("Konum/hava verisi alınamadı.");
+        console.error(e);
+    }
+}
+
+function weatherCodeToText(code) {
+    if (code === 0) return "Açık";
+    if (code === 1 || code === 2) return "Parçalı Bulutlu";
+    if (code === 3) return "Bulutlu";
+    if (code === 45 || code === 48) return "Sisli";
+    if (code === 51 || code === 53 || code === 55) return "Çiseleme";
+    if (code === 61 || code === 63 || code === 65) return "Yağmurlu";
+    if (code === 66 || code === 67) return "Dondurucu Yağmur";
+    if (code === 71 || code === 73 || code === 75) return "Karlı";
+    if (code === 95) return "Gök Gürültülü Sağanak";
+    if (code === 96 || code === 99) return "Dolu Yağışlı Fırtına";
+    return "Bilinmeyen Durum";
 }
 </script>
 </body>
