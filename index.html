@@ -43,7 +43,7 @@
             cursor: none;
         }
 
-        /* === 1. CRT SCANLINES EFEKTİ === */
+        /* === CRT SCANLINES === */
         .scanlines {
             position: fixed;
             top: 0; left: 0;
@@ -61,7 +61,7 @@
             opacity: 0.6;
         }
 
-        /* === 2. TECH GRID (HARİTA ÜSTÜ IZGARA) === */
+        /* === IZGARA === */
         .tech-grid {
             position: fixed;
             top: 0; left: 0;
@@ -75,7 +75,7 @@
             pointer-events: none;
         }
 
-        /* === 3. BOOT SCREEN (AÇILIŞ EKRANI) === */
+        /* === BOOT SCREEN === */
         #boot-screen {
             position: fixed;
             top: 0; left: 0;
@@ -113,7 +113,7 @@
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes loadBar { to { width: 100%; } }
 
-        /* === 4. ÖZEL MOUSE İMLECİ === */
+        /* === CUSTOM CURSOR === */
         #custom-cursor {
             position: fixed;
             width: 40px; height: 40px;
@@ -173,7 +173,7 @@
             transform: translateY(-1px) scale(1.03);
         }
 
-        /* PANEL (NEON GLOW) */
+        /* PANEL */
         .panel {
             background: var(--bg-panel);
             border: 1px solid var(--theme-color);
@@ -194,7 +194,7 @@
             padding-bottom: 5px;
         }
 
-        /* GLITCH (BAŞLIK EFEKTİ) */
+        /* GLITCH BAŞLIK */
         @keyframes glitch {
             0% { transform: translate(0) }
             20% { transform: translate(-2px, 2px) }
@@ -383,7 +383,7 @@
         }
         @media (min-width: 901px) { .settings-toggle { display: none; } }
 
-        /* === HUD CORNER BRACKETS === */
+        /* HUD CORNER BRACKETS */
         .hud-corner {
             position: fixed;
             width: 70px;
@@ -410,26 +410,27 @@
             border-left: none; border-top: none;
         }
 
-        /* === GECE / GÜNDÜZ KUŞAĞI (TERMINATOR) === */
+        /* GECE / GÜNDÜZ KUŞAĞI (yumuşatıldı, kenarlar görünmesin) */
         .terminator {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: -10%; left: -10%;
+            width: 120%; height: 120%;
             pointer-events: none;
             z-index: 1;
             background: linear-gradient(90deg,
-                rgba(0,0,0,0.7) 0%,
-                rgba(0,0,0,0.5) 45%,
-                rgba(0,0,0,0.0) 55%,
+                rgba(0,0,0,0.65) 0%,
+                rgba(0,0,0,0.45) 40%,
+                rgba(0,0,0,0.0) 60%,
                 rgba(255,255,255,0.0) 100%
             );
-            opacity: 0.6;
+            opacity: 0.45;
             mix-blend-mode: multiply;
-            transition: transform 0.8s ease-out;
+            transition: transform 1s ease-out;
             transform-origin: 50% 50%;
+            filter: blur(2px);
         }
 
-        /* === SOLAR PANEL VERİMLİLİK ÇUBUĞU === */
+        /* SOLAR PANEL VERİMLİLİK ÇUBUĞU */
         .solar-bar {
             width: 100%;
             height: 8px;
@@ -450,7 +451,7 @@
             color: var(--text-sub);
         }
 
-        /* === DIŞ SICAKLIK TERMOMETRE ÇUBUĞU === */
+        /* DIŞ SICAKLIK TERMOMETRE ÇUBUĞU */
         .temp-row {
             flex-direction: column;
             align-items: flex-start;
@@ -510,6 +511,7 @@
 
     <div class="ui-layer">
         <div class="left-column">
+            <!-- ISS SİSTEMİ -->
             <div class="panel" id="panel-system">
                 <div class="panel-header">
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -542,7 +544,7 @@
                     <div class="stat-row temp-row">
                         <span class="stat-label">
                             <i class="fa-solid fa-temperature-three-quarters"></i>
-                            Dış Sıcaklık
+                            Dış Sıcaklık (model)
                         </span>
                         <span class="stat-value" id="temp-val">--</span>
                         <div class="temp-gauge">
@@ -552,6 +554,7 @@
                 </div>
             </div>
 
+            <!-- MÜRETTEBAT -->
             <div class="panel" id="panel-crew">
                 <div class="panel-header">
                     <h3>MÜRETTEBAT</h3>
@@ -564,6 +567,7 @@
                 </div>
             </div>
 
+            <!-- MESAFELER -->
             <div class="panel" id="panel-distances">
                 <div class="panel-header">
                     <h3>MESAFELER</h3>
@@ -586,9 +590,31 @@
                     </div>
                 </div>
             </div>
+
+            <!-- BAĞLANTI / GECİKME -->
+            <div class="panel" id="panel-link">
+                <div class="panel-header">
+                    <h3>İLETİŞİM</h3>
+                    <button class="toggle-btn clickable" onclick="togglePanel('panel-link')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-wave-square"></i>Sinyal Gecikmesi
+                        </span>
+                        <span class="stat-value" id="signal-delay-val">--</span>
+                    </div>
+                    <p class="panel-note">
+                        Not: Boşluktaki ışık hızına göre teorik bir değerdir.
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div class="right-column">
+            <!-- SİSTEM AYARLARI -->
             <div class="panel" id="panel-settings">
                 <div class="panel-header">
                     <h3>SİSTEM AYARLARI</h3>
@@ -613,7 +639,37 @@
                 </div>
             </div>
 
-            <!-- Solar panel verim paneli -->
+            <!-- ZAMAN PANELİ -->
+            <div class="panel" id="panel-time">
+                <div class="panel-header">
+                    <h3>ZAMAN SİSTEMİ</h3>
+                    <button class="toggle-btn clickable" onclick="togglePanel('panel-time')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-globe"></i>UTC Saati
+                        </span>
+                        <span class="stat-value" id="time-utc">--:--:--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-location-crosshairs"></i>Yerel Saat
+                        </span>
+                        <span class="stat-value" id="time-local">--:--:--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-hourglass-half"></i>Oturum Süresi
+                        </span>
+                        <span class="stat-value" id="time-session">00:00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOLAR PANEL -->
             <div class="panel" id="panel-solar">
                 <div class="panel-header">
                     <h3>SOLAR ARRAY</h3>
@@ -637,7 +693,40 @@
                 </div>
             </div>
 
-            <!-- Üzerindeki bölge & hava durumu paneli -->
+            <!-- YÖRÜNGE VERİLERİ -->
+            <div class="panel" id="panel-orbit">
+                <div class="panel-header">
+                    <h3>YÖRÜNGE VERİLERİ</h3>
+                    <button class="toggle-btn clickable" onclick="togglePanel('panel-orbit')">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-circle-notch"></i>Yörünge Eğikliği
+                        </span>
+                        <span class="stat-value">51.6°</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-clock-rotate-left"></i>Yörünge Süresi
+                        </span>
+                        <span class="stat-value">~92 dk</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fa-solid fa-sync"></i>Günlük Tur Sayısı
+                        </span>
+                        <span class="stat-value">~15.5 tur/gün</span>
+                    </div>
+                    <p class="panel-note">
+                        Not: Bu değerler ISS'in bilinen sabit yörünge parametrelerinden alınmıştır, anlık ölçüm değildir.
+                    </p>
+                </div>
+            </div>
+
+            <!-- KONUM & HAVA -->
             <div class="panel" id="panel-env">
                 <div class="panel-header">
                     <h3>KONUM &amp; HAVA</h3>
@@ -686,10 +775,11 @@ let pathHistory = [];
 let currentIcon = "fa-satellite";
 let isLightMode = false;
 
-let fovPolygon = null;          // Tarama konisi (Field of View)
-let sweepAngle = 0;             // Koninin döndüğü açı
+let fovPolygon = null;          // Tarama sektörü
+let sweepAngle = 0;             // Dönüş açısı
 let lastEnvUpdateTime = 0;      // Konum & hava için throttle
 let isDaySide = true;           // Solar panel verimi için
+let missionStart = Date.now();  // Oturum süresi için
 
 const ISS_API_URL = "https://api.wheretheiss.at/v1/satellites/25544";
 const MOON_MEAN_DISTANCE_KM = 384400;
@@ -710,11 +800,12 @@ window.onload = () => {
     renderColors();
     renderIcons();
     initUserLocation();
+    startClocks();
     startIssTracking();
     addLog("Sistem başlatıldı. Gerçek ISS telemetrisi etkin.");
 };
 
-/* ========= CUSTOM CURSOR MANTIĞI ========= */
+/* ========= CUSTOM CURSOR ========= */
 document.addEventListener('mousemove', (e) => {
     const cursor = document.getElementById('custom-cursor');
     if(isLightMode || window.innerWidth <= 900) {
@@ -796,7 +887,41 @@ function hackerTextEffect(elementId, newValue) {
     }, 30);
 }
 
-/* ========= GERÇEK ISS TAKİBİ ========= */
+/* ========= SAAT PANELİ ========= */
+function startClocks() {
+    updateClocks();
+    setInterval(updateClocks, 1000);
+}
+
+function pad2(n) { return n.toString().padStart(2, "0"); }
+
+function updateClocks() {
+    const now = new Date();
+
+    const utcStr = now.toLocaleTimeString("tr-TR", {
+        timeZone: "UTC",
+        hour12: false
+    });
+    const localStr = now.toLocaleTimeString("tr-TR", {
+        hour12: false
+    });
+
+    const sessionMs = Date.now() - missionStart;
+    const s = Math.floor(sessionMs / 1000);
+    const hh = pad2(Math.floor(s / 3600));
+    const mm = pad2(Math.floor((s % 3600) / 60));
+    const ss = pad2(s % 60);
+
+    const utcEl = document.getElementById("time-utc");
+    const localEl = document.getElementById("time-local");
+    const sessEl = document.getElementById("time-session");
+
+    if (utcEl) utcEl.innerText = utcStr;
+    if (localEl) localEl.innerText = localStr;
+    if (sessEl) sessEl.innerText = `${hh}:${mm}:${ss}`;
+}
+
+/* ========= ISS TAKİBİ ========= */
 function startIssTracking() {
     fetchAndUpdateIss();
     setInterval(fetchAndUpdateIss, 3000);
@@ -819,8 +944,8 @@ async function fetchAndUpdateIss() {
         if (pathHistory.length > 300) pathHistory.shift();
         polyline.setLatLngs(pathHistory);
 
-        // Tarama konisi (Field of View) - artık dönen radar gibi
-        updateFovCone(lat, lng);
+        // Tarama sektörü (smooth, yuvarlak uçlu)
+        updateFovSector(lat, lng);
 
         // Dış sıcaklık simülasyonu
         const temp = computeExteriorTemp(lat);
@@ -836,7 +961,7 @@ async function fetchAndUpdateIss() {
             updateEnvironment(lat, lng);
         }
 
-        // Matrix efektiyle güncelle
+        // Değerleri ekrana yaz
         hackerTextEffect("lat-val", lat.toFixed(4));
         hackerTextEffect("lng-val", lng.toFixed(4));
         hackerTextEffect("alt-val", alt.toFixed(1) + " km");
@@ -851,6 +976,7 @@ async function fetchAndUpdateIss() {
         if (userLat !== null && userLng !== null) {
             const d = getDistanceKm(userLat, userLng, lat, lng);
             document.getElementById("you-dist-val").innerText = d.toFixed(0) + " km";
+            updateSignalDelay(d);
         }
 
         addLog(`KONUM: ${lat.toFixed(2)}, ${lng.toFixed(2)} | İrtifa: ${alt.toFixed(1)} km`);
@@ -861,6 +987,7 @@ async function fetchAndUpdateIss() {
     }
 }
 
+/* ========= KULLANICI KONUMU ========= */
 function initUserLocation() {
     if (!navigator.geolocation) {
         addLog("Tarayıcı konum servisini desteklemiyor.");
@@ -1010,8 +1137,7 @@ function renderIcons() {
     });
 }
 
-/* ========= TARAMA KONİSİ (FIELD OF VIEW) ========= */
-// küçük mesafelerde yaklaşık dönüşüm
+/* ========= TARAMA SEKTÖRÜ (YUVARLAK UÇLU) ========= */
 function latLngOffset(lat, lng, distanceDeg, bearingDeg) {
     const rad = Math.PI / 180;
     const latRad = lat * rad;
@@ -1023,7 +1149,7 @@ function latLngOffset(lat, lng, distanceDeg, bearingDeg) {
     return [Math.max(-85, Math.min(85, newLat)), ((newLng + 540) % 360) - 180];
 }
 
-function updateFovCone(lat, lng) {
+function updateFovSector(lat, lng) {
     if (!map) return;
 
     if (fovPolygon) {
@@ -1033,16 +1159,18 @@ function updateFovCone(lat, lng) {
     const themeColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--theme-color').trim();
 
-    // Radar taraması gibi yavaş dönen açı
-    sweepAngle = (sweepAngle + 18) % 360; // her güncellemede 18° ileri
+    // Radar taraması gibi dönen açı
+    sweepAngle = (sweepAngle + 18) % 360; // her konum güncellemesinde ~18°
     const halfAngle = 25;
-    const radius = 20; // derecelik "menzil"
+    const radius = 18; // derece cinsinden "menzil"
 
-    const center = [lat, lng];
-    const p2 = latLngOffset(lat, lng, radius, sweepAngle - halfAngle);
-    const p3 = latLngOffset(lat, lng, radius, sweepAngle + halfAngle);
+    const points = [];
+    points.push([lat, lng]);
+    for (let a = sweepAngle - halfAngle; a <= sweepAngle + halfAngle; a += 3) {
+        points.push(latLngOffset(lat, lng, radius, a));
+    }
 
-    fovPolygon = L.polygon([center, p2, p3], {
+    fovPolygon = L.polygon(points, {
         color: themeColor,
         weight: 1,
         fillColor: themeColor,
@@ -1074,7 +1202,7 @@ function updateTemperatureUI(temp) {
     }
 }
 
-/* ========= GECE / GÜNDÜZ + SOLAR PANEL VERİMİ ========= */
+/* ========= GECE / GÜNDÜZ + SOLAR PANEL ========= */
 function updateDayNightAndSolar(lat, lng) {
     const terminator = document.getElementById('terminator');
     if (terminator) {
@@ -1096,7 +1224,17 @@ function updateDayNightAndSolar(lat, lng) {
     }
 }
 
-/* ========= KONUM + HAVA DURUMU ========= */
+/* ========= SİNYAL GECİKMESİ ========= */
+function updateSignalDelay(distanceKm) {
+    const c_km_s = 299792.458; // ışık hızı (km/s)
+    const delayMs = (distanceKm / c_km_s) * 1000;
+    const el = document.getElementById("signal-delay-val");
+    if (el) {
+        el.innerText = delayMs.toFixed(2) + " ms (teorik)";
+    }
+}
+
+/* ========= KONUM + HAVA ========= */
 async function updateEnvironment(lat, lng) {
     try {
         let locationLabel = "Okyanus Üzeri";
@@ -1116,7 +1254,7 @@ async function updateEnvironment(lat, lng) {
             console.warn("Reverse geocoding başarısız", e);
         }
 
-               const locEl = document.getElementById("loc-name");
+        const locEl = document.getElementById("loc-name");
         if (locEl) {
             locEl.innerText = locationLabel;
         }
