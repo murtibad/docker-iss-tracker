@@ -149,7 +149,7 @@
             box-sizing: border-box;
         }
 
-        .left-column, .right-column {
+        .left-column {
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -157,6 +157,18 @@
             pointer-events: auto;
             max-height: 95vh;
             overflow-y: auto;
+        }
+
+        /* sağ kolonu biraz sola çek, sağda bilgi kartına yer aç */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 340px;
+            pointer-events: auto;
+            max-height: 95vh;
+            overflow-y: auto;
+            margin-right: 260px; /* sağ alttaki info kart için boşluk */
         }
 
         .clickable {
@@ -294,9 +306,11 @@
         }
         .terminal--hidden { opacity: 0; transform: scale(0.9); pointer-events: none; }
 
+        /* terminal butonunu sol panel kolonunun sağına al */
         #terminal-toggle {
             position: absolute;
-            bottom: 170px; left: 20px;
+            bottom: 25px;
+            left: 390px; /* 20px padding + 350px left-column + 20px boşluk */
             padding: 6px 12px;
             font-size: 0.75rem;
             background: var(--theme-color);
@@ -304,14 +318,19 @@
             border: none;
             border-radius: 999px;
             z-index: 1300;
-            display: flex; align-items: center; gap: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             box-shadow: 0 0 14px rgba(0,0,0,0.6);
             pointer-events: auto;
         }
 
+        /* kişisel bilgi kartını biraz daralt */
         .personal-info {
             position: absolute;
-            bottom: 20px; right: 20px;
+            bottom: 20px;
+            right: 20px;
+            width: 230px;
             background: var(--bg-panel);
             border-right: 4px solid var(--theme-color);
             padding: 15px;
@@ -361,7 +380,7 @@
             .scanlines, .tech-grid { display: none; }
             
             .ui-layer { position: relative; flex-direction: column; padding: 10px; pointer-events: none; }
-            .left-column, .right-column { width: 100%; max-height: none; overflow: visible; }
+            .left-column, .right-column { width: 100%; max-height: none; overflow: visible; margin-right:0; }
             .panel { margin: 0 5px; }
             #terminal-toggle { bottom: 10px; left: 10px; padding: 6px 10px; }
             .terminal { width: calc(100% - 20px); left: 10px; bottom: 45px; height: 120px; }
@@ -751,7 +770,7 @@ let pathHistory = [];
 let currentIcon = "fa-satellite";
 let isLightMode = false;
 
-let fovCircle = null;      // yeni: yuvarlak tarama alanı
+let fovCircle = null;      // pulsating tarama halkası
 let pulsePhase = 0;
 let lastEnvUpdateTime = 0;
 let isDaySide = true;
@@ -907,7 +926,7 @@ async function fetchAndUpdateIss() {
 
         issMarker.setLatLng(pos);
         pathHistory.push(pos);
-        if (pathHistory.length > 120) pathHistory.shift(); // kısalttım
+        if (pathHistory.length > 120) pathHistory.shift();
         polyline.setLatLngs(pathHistory);
 
         updateFovCircle(lat, lng);
@@ -1090,19 +1109,19 @@ function renderIcons() {
     });
 }
 
-/* === Yeni: Pulsing Tarama Halkası === */
+/* === Pulsing Tarama Halkası (pixel bazlı, ISS tam ortada) === */
 function updateFovCircle(lat, lng) {
     const themeColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--theme-color').trim();
 
-    const baseRadius = 900000; // metre
-    const delta = 250000;
+    const baseRadius = 50;  // px
+    const delta = 15;       // px
     pulsePhase = (pulsePhase + 0.4) % (Math.PI * 2);
     const radius = baseRadius + Math.sin(pulsePhase) * delta;
 
     if (!fovCircle) {
-        fovCircle = L.circle([lat, lng], {
-            radius,
+        fovCircle = L.circleMarker([lat, lng], {
+            radius: radius,
             color: themeColor,
             weight: 1,
             fillColor: themeColor,
