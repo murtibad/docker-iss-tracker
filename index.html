@@ -30,6 +30,10 @@
             background-color: #f0f0f0;
             cursor: auto !important;
         }
+        /* Aydınlık temada terminator çizgisini tamamen kapat */
+        body.light-mode .terminator {
+            display: none;
+        }
 
         body, html {
             margin: 0;
@@ -51,13 +55,13 @@
                 to bottom,
                 rgba(255,255,255,0),
                 rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.2) 50%,
-                rgba(0,0,0,0.2)
+                rgba(0,0,0,0.12) 50%,
+                rgba(0,0,0,0.12)
             );
             background-size: 100% 4px;
             z-index: 2000;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.35;
         }
 
         .tech-grid {
@@ -68,7 +72,7 @@
                 linear-gradient(var(--border-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
             background-size: 50px 50px;
-            opacity: 0.15;
+            opacity: 0.12;
             z-index: 2;
             pointer-events: none;
         }
@@ -154,9 +158,9 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            width: 300px;              /* kutular küçültüldü */
+            width: 300px;
             pointer-events: auto;
-            max-height: 80vh;          /* daha kısa, altta çakışmasın */
+            max-height: 80vh;
             overflow-y: auto;
         }
 
@@ -299,11 +303,10 @@
         }
         .terminal--hidden { opacity: 0; transform: scale(0.9); pointer-events: none; }
 
-        /* terminal butonunu sol panel kolonunun sağına al */
         #terminal-toggle {
             position: absolute;
             bottom: 25px;
-            left: 340px; /* 20 padding + 300 left-column + 20 boşluk */
+            left: 340px;
             padding: 5px 10px;
             font-size: 0.7rem;
             background: var(--theme-color);
@@ -318,7 +321,6 @@
             pointer-events: auto;
         }
 
-        /* kişisel bilgi kartı sağ altta, biraz dar */
         .personal-info {
             position: absolute;
             bottom: 20px;
@@ -420,12 +422,12 @@
             pointer-events: none;
             z-index: 1;
             background: linear-gradient(90deg,
-                rgba(0,0,0,0.65) 0%,
-                rgba(0,0,0,0.45) 40%,
+                rgba(0,0,0,0.6) 0%,
+                rgba(0,0,0,0.4) 40%,
                 rgba(0,0,0,0.0) 60%,
                 rgba(255,255,255,0.0) 100%
             );
-            opacity: 0.45;
+            opacity: 0.4;
             mix-blend-mode: multiply;
             transition: transform 1s ease-out;
             transform-origin: 50% 50%;
@@ -477,6 +479,18 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* YÖRÜNGE PANELİNİ ÖZEL OLARAK KÜÇÜLT */
+        #panel-orbit .panel-content {
+            font-size: 0.8rem;
+        }
+        #panel-orbit .stat-row {
+            margin-bottom: 3px;
+        }
+        #panel-orbit .panel-note {
+            font-size: 0.6rem;
+            line-height: 1.2;
         }
     </style>
 </head>
@@ -982,7 +996,7 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const toRad = deg => deg * Math.PI / 180;
     const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);  // HATA DÜZELTİLDİ
+    const dLon = toRad(lon2 - lon1);
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
         Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
@@ -1110,8 +1124,8 @@ function updateFovCircle(lat, lng) {
     const themeColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--theme-color').trim();
 
-    const baseRadius = 50;  // px
-    const delta = 15;       // px
+    const baseRadius = 50;
+    const delta = 15;
     pulsePhase = (pulsePhase + 0.4) % (Math.PI * 2);
     const radius = baseRadius + Math.sin(pulsePhase) * delta;
 
@@ -1165,14 +1179,13 @@ function updateDayNightAndSolar(lat, lng) {
     document.getElementById("solar-eff-bar-fill").style.width = solarEff + "%";
 }
 
-/* === SİNYAL GECİKMESİ (her durumda çalışır) === */
+/* === SİNYAL GECİKMESİ === */
 function updateSignalDelay(lat, lng) {
-    // Kullanıcı konumu varsa onu kullan; yoksa Ankara'yı referans al (yaklaşık)
     let groundLat = userLat;
     let groundLng = userLng;
 
     if (groundLat === null || groundLng === null) {
-        groundLat = 39.9;   // Ankara approx
+        groundLat = 39.9;   // Ankara
         groundLng = 32.8;
     }
 
