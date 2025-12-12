@@ -383,19 +383,6 @@
         }
         @media (min-width: 901px) { .settings-toggle { display: none; } }
 
-        /* === VİGNETTE (HAFİF KARANLIK KÖŞELER) === */
-        .vignette {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 3;
-            box-shadow: inset 0 0 160px 60px rgba(0,0,0,0.75);
-        }
-        body.light-mode .vignette {
-            box-shadow: inset 0 0 140px 40px rgba(0,0,0,0.35);
-        }
-
         /* === HUD CORNER BRACKETS === */
         .hud-corner {
             position: fixed;
@@ -421,37 +408,6 @@
         .hud-corner--br {
             bottom: 8px; right: 8px;
             border-left: none; border-top: none;
-        }
-
-        /* === SAHTE FREKANS (SİNYAL) GRAFİĞİ === */
-        .freq-graph {
-            position: absolute;
-            bottom: 20px;
-            left: 360px; /* Terminalin yanına hizalanmış */
-            width: 230px;
-            height: 80px;
-            background: rgba(5, 8, 15, 0.94);
-            border: 1px solid var(--theme-color);
-            border-radius: 8px;
-            padding: 6px 8px;
-            display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            pointer-events: none;
-            z-index: 1150;
-            box-shadow: 0 0 16px rgba(0,0,0,0.7);
-        }
-        .freq-bar {
-            flex: 1;
-            background: var(--theme-color);
-            opacity: 0.7;
-            height: 20%;
-            transition: height 0.15s ease-out, opacity 0.15s ease-out;
-        }
-        @media (max-width: 900px) {
-            .freq-graph {
-                display: none;
-            }
         }
 
         /* === GECE / GÜNDÜZ KUŞAĞI (TERMINATOR) === */
@@ -541,16 +497,12 @@
     <div id="custom-cursor"></div>
 
     <div id="map"></div>
-    <!-- Yeni overlayler -->
     <div id="terminator" class="terminator"></div>
-    <div class="vignette"></div>
 
     <div class="hud-corner hud-corner--tl"></div>
     <div class="hud-corner hud-corner--tr"></div>
     <div class="hud-corner hud-corner--bl"></div>
     <div class="hud-corner hud-corner--br"></div>
-
-    <div id="freq-graph" class="freq-graph"></div>
 
     <button id="settings-toggle" class="settings-toggle clickable" onclick="toggleMobileUI()">
         <i id="settings-toggle-icon" class="fa-solid fa-gear"></i>
@@ -735,6 +687,7 @@ let currentIcon = "fa-satellite";
 let isLightMode = false;
 
 let fovPolygon = null;          // Tarama konisi (Field of View)
+let sweepAngle = 0;             // Koninin döndüğü açı
 let lastEnvUpdateTime = 0;      // Konum & hava için throttle
 let isDaySide = true;           // Solar panel verimi için
 
@@ -757,7 +710,6 @@ window.onload = () => {
     renderColors();
     renderIcons();
     initUserLocation();
-    initFakeSignal();        // Sinyal grafiği
     startIssTracking();
     addLog("Sistem başlatıldı. Gerçek ISS telemetrisi etkin.");
 };
@@ -867,7 +819,7 @@ async function fetchAndUpdateIss() {
         if (pathHistory.length > 300) pathHistory.shift();
         polyline.setLatLngs(pathHistory);
 
-        // Tarama konisi (Field of View)
+        // Tarama konisi (Field of View) - artık dönen radar gibi
         updateFovCone(lat, lng);
 
         // Dış sıcaklık simülasyonu
@@ -1059,8 +1011,16 @@ function renderIcons() {
 }
 
 /* ========= TARAMA KONİSİ (FIELD OF VIEW) ========= */
-function clampLat(lat) {
-    return Math.max(-80, Math.min(80, lat));
+// küçük mesafelerde yaklaşık dönüşüm
+function latLngOffset(lat, lng, distanceDeg, bearingDeg) {
+    const rad = Math.PI / 180;
+    const latRad = lat * rad;
+    const brg = bearingDeg * rad;
+    const d = distanceDeg;
+
+    const newLat = lat + d * Math.sin(brg);
+    const newLng = lng + (d * Math.cos(brg)) / Math.cos(latRad || 0.0001);
+    return [Math.max(-85, Math.min(85, newLat)), ((newLng + 540) % 360) - 180];
 }
 
 function updateFovCone(lat, lng) {
@@ -1073,14 +1033,16 @@ function updateFovCone(lat, lng) {
     const themeColor = getComputedStyle(document.documentElement)
         .getPropertyValue('--theme-color').trim();
 
-    const forwardLng = lng + 25;
-    const halfSpan = 12;
+    // Radar taraması gibi yavaş dönen açı
+    sweepAngle = (sweepAngle + 18) % 360; // her güncellemede 18° ileri
+    const halfAngle = 25;
+    const radius = 20; // derecelik "menzil"
 
-    const p1 = [lat, lng];
-    const p2 = [clampLat(lat + halfSpan), forwardLng];
-    const p3 = [clampLat(lat - halfSpan), forwardLng];
+    const center = [lat, lng];
+    const p2 = latLngOffset(lat, lng, radius, sweepAngle - halfAngle);
+    const p3 = latLngOffset(lat, lng, radius, sweepAngle + halfAngle);
 
-    fovPolygon = L.polygon([p1, p2, p3], {
+    fovPolygon = L.polygon([center, p2, p3], {
         color: themeColor,
         weight: 1,
         fillColor: themeColor,
@@ -1134,27 +1096,6 @@ function updateDayNightAndSolar(lat, lng) {
     }
 }
 
-/* ========= SAHTE FREKANS GRAFİĞİ ========= */
-function initFakeSignal() {
-    const container = document.getElementById("freq-graph");
-    if (!container) return;
-
-    for (let i = 0; i < 24; i++) {
-        const bar = document.createElement("div");
-        bar.className = "freq-bar";
-        container.appendChild(bar);
-    }
-
-    setInterval(() => {
-        const bars = container.querySelectorAll(".freq-bar");
-        bars.forEach(bar => {
-            const h = 10 + Math.random() * 90;
-            bar.style.height = h + "%";
-            bar.style.opacity = 0.4 + Math.random() * 0.6;
-        });
-    }, 120);
-}
-
 /* ========= KONUM + HAVA DURUMU ========= */
 async function updateEnvironment(lat, lng) {
     try {
@@ -1175,7 +1116,7 @@ async function updateEnvironment(lat, lng) {
             console.warn("Reverse geocoding başarısız", e);
         }
 
-        const locEl = document.getElementById("loc-name");
+               const locEl = document.getElementById("loc-name");
         if (locEl) {
             locEl.innerText = locationLabel;
         }
